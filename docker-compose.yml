@@ -1,0 +1,54 @@
+version: "3.8"
+
+services:
+  # 1. Database MySQL
+  db:
+    image: mysql:8.0
+    container_name: blpt_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: blpt-diy-skema
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - blpt_mysql_data:/var/lib/mysql
+
+  # 2. Backend Laravel
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: blpt_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_DATABASE: blpt-diy-skema
+      DB_USERNAME: root
+      DB_PASSWORD: root
+
+  # 3. Frontend React (Vite)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: blpt_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Mencegah overwrite node_modules lokal
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000/api/v1
+    command: npm run dev -- --host 0.0.0.0
+
+volumes:
+  blpt_mysql_data:
