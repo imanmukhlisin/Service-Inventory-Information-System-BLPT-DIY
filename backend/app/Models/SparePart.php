@@ -2,32 +2,29 @@
 
 namespace App\Models;
 
-use App\Enums\UserRole;
-use App\Enums\UserStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class User extends Model
+class SparePart extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
     protected $casts = [
-        'role' => UserRole::class,
-        'status' => UserStatus::class,
+        'harga_jual' => 'decimal:2',
     ];
 
-    public function login(): HasOne
+    public function stock(): HasOne
     {
-        return $this->hasOne(Login::class);
+        return $this->hasOne(SparePartStock::class);
     }
 
-    public function transactions(): HasMany
+    public function transactionSpareParts(): HasMany
     {
-        return $this->hasMany(Transaction::class);
+        return $this->hasMany(TransactionSparePart::class);
     }
 
     public function sparePartOrders(): HasMany
