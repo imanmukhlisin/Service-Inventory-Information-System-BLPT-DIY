@@ -20,7 +20,6 @@ const Login: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      await fetchCsrfToken();
       const response = await apiClient.post("/authorizer/login", {
         username,
         password,

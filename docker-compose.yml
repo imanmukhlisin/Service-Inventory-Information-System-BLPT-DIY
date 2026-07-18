@@ -29,10 +29,11 @@ services:
     depends_on:
       - db
     environment:
-      DB_HOST: db
+      DB_HOST: 172.22.0.3
       DB_DATABASE: blpt-diy-skema
       DB_USERNAME: root
       DB_PASSWORD: root
+      PHP_CLI_SERVER_WORKERS: 15
 
   # 3. Frontend React (Vite)
   frontend:

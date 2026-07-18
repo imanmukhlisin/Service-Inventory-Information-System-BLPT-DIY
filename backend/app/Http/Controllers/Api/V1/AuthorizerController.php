@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Login;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthorizerController extends Controller
 {
@@ -32,7 +33,8 @@ class AuthorizerController extends Controller
             ], 403);
         }
 
-        // $token = $login->createToken('auth_token')->plainTextToken;
+        Auth::login($login);
+        $request->session()->regenerate();
 
         return response()->json([
             'success' => true,
@@ -56,7 +58,10 @@ class AuthorizerController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return response()->json([
             'success' => true,

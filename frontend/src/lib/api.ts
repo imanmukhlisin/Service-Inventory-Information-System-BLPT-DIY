@@ -11,6 +11,7 @@ export const apiClient = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true, // Crucial for Sanctum cookies
+  withXSRFToken: true,   // Crucial for Axios 1.6+ cross-origin CSRF headers
 });
 
 // Setup CSRF configuration
@@ -18,9 +19,7 @@ export const apiClient = axios.create({
 export const fetchCsrfToken = async () => {
   // /sanctum/csrf-cookie is usually at the root URL (not prefixed by /api/v1)
   const rootUrl = API_URL.replace(/\/api\/v1\/?$/, "");
-  await axios.get(`${rootUrl}/sanctum/csrf-cookie`, {
-    withCredentials: true,
-  });
+  await apiClient.get(`${rootUrl}/sanctum/csrf-cookie`);
 };
 
 // Response Interceptor for Unauthorized handling

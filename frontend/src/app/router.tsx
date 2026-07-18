@@ -6,7 +6,7 @@ import { useAuth } from "./AuthContext";
 import Login from "../features/authorizer/Login";
 import BaseLayout from "../components/layout/BaseLayout";
 // Admin
-// import AdminDashboard from '../features/dashboards/AdminDashboard';
+import AdminDashboard from "../features/dashboards/AdminDashboard";
 // FO
 // import KasirPage from '../features/transactions/KasirPage';
 
@@ -62,7 +62,7 @@ export const router = createBrowserRouter([
       {
         element: <BaseLayout title="Admin Panel" />,
         children: [
-          { path: "dashboard", element: <div>Admin Dashboard</div> },
+          { path: "dashboard", element: <AdminDashboard /> },
           // { path: 'users', element: <UserList /> },
         ],
       },

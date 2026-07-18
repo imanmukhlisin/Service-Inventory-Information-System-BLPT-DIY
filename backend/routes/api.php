@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\SparePartReceiptController;
 use App\Http\Controllers\Api\V1\StockController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -21,6 +22,8 @@ Route::prefix('v1')->group(function () {
 
         // Admin Specific Routes
         Route::middleware('role:admin')->group(function () {
+            Route::get('/dashboard/admin/stats', [DashboardController::class, 'adminStats']);
+
             Route::apiResource('/users', UserController::class);
             Route::apiResource('/login-accounts', LoginAccountController::class);
 
