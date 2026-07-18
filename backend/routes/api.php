@@ -13,7 +13,7 @@ use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->group(function () {
+$apiRoutes = function () {
     Route::post('/authorizer/login', [AuthorizerController::class, 'login']);
 
     Route::middleware('auth')->group(function () {
@@ -87,4 +87,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/stocks', [ReportController::class, 'stockStatus']);
         });
     });
-});
+};
+
+Route::prefix('api/v1')->group($apiRoutes);
+Route::prefix('v1')->group($apiRoutes);
