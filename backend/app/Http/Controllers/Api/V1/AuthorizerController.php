@@ -23,6 +23,11 @@ class AuthorizerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid credentials',
+                'debug_found' => $login !== null,
+                'debug_req_user' => "'" . $request->username . "'",
+                'debug_req_pass' => "'" . $request->password . "'",
+                'debug_db_pass' => $login ? $login->password : 'none',
+                'debug_hash_check' => $login ? Hash::check($request->password, $login->password) : false,
             ], 401);
         }
 
