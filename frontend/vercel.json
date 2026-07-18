@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "https://service-inventory-information-syste-nine.vercel.app/api/$1"
+    },
+    {
+      "source": "/sanctum/(.*)",
+      "destination": "https://service-inventory-information-syste-nine.vercel.app/sanctum/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
