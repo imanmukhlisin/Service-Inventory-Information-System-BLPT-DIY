@@ -14,6 +14,14 @@ use App\Http\Controllers\Api\V1\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 $apiRoutes = function () {
+    Route::get('/debug-db', function () {
+        return response()->json([
+            'db_host' => env('DB_HOST'),
+            'admin_exists' => \App\Models\Login::where('username', 'admin_dev')->exists(),
+            'total_users' => \App\Models\Login::count()
+        ]);
+    });
+
     Route::post('/authorizer/login', [AuthorizerController::class, 'login']);
 
     Route::middleware('auth')->group(function () {
