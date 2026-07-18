@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogIn, Key, User as UserIcon } from "lucide-react";
+import { LogIn, Key, User as UserIcon, Eye, EyeOff } from "lucide-react";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
 import styles from "./Login.module.css";
@@ -8,6 +8,7 @@ import styles from "./Login.module.css";
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -95,13 +96,32 @@ const Login: React.FC = () => {
             <div className={styles.inputWrapper}>
               <Key size={18} className={styles.inputIcon} />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Masukkan password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
+                style={{ paddingRight: "40px" }}
               />
+              <button
+                type="button"
+                className={styles.eyeBtn}
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "10px",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#6c757d",
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
