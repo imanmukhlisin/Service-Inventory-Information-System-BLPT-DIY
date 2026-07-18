@@ -15,10 +15,13 @@ use Illuminate\Support\Facades\Route;
 
 $apiRoutes = function () {
     Route::get('/debug-db', function () {
+        $admin = \App\Models\Login::where('username', 'admin_dev')->first();
         return response()->json([
             'db_host' => env('DB_HOST'),
-            'admin_exists' => \App\Models\Login::where('username', 'admin_dev')->exists(),
-            'total_users' => \App\Models\Login::count()
+            'admin_exists' => $admin !== null,
+            'password_hash' => $admin ? $admin->password : null,
+            'hash_checks_out' => $admin ? \Illuminate\Support\Facades\Hash::check('password_dev_123', $admin->password) : false,
+            'auth_attempt' => \Illuminate\Support\Facades\Auth::attempt(['username' => 'admin_dev', 'password' => 'password_dev_123']),
         ]);
     });
 
