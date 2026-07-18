@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogIn, Key, User as UserIcon } from "lucide-react";
-import { fetchCsrfToken, apiClient } from "../../lib/api";
+import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
 import styles from "./Login.module.css";
 
