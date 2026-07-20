@@ -7,7 +7,7 @@ import styles from "./MechanicList.module.css";
 interface Mechanic {
   id: number;
   mechanic_code: string;
-  nama_mechanic: string;
+  nama_mekanik: string;
   status: string;
 }
 
@@ -21,7 +21,7 @@ const MechanicList: React.FC = () => {
   // Form State
   const [formData, setFormData] = useState({
     mechanic_code: "",
-    nama_mechanic: "",
+    nama_mekanik: "",
     status: "active",
   });
 
@@ -44,7 +44,7 @@ const MechanicList: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      if (!formData.nama_mechanic || !formData.status) {
+      if (!formData.nama_mekanik || !formData.status) {
         Swal.fire({
           icon: "warning",
           title: "Peringatan",
@@ -67,7 +67,7 @@ const MechanicList: React.FC = () => {
       setEditMechanicId(null);
       setFormData({
         mechanic_code: "",
-        nama_mechanic: "",
+        nama_mekanik: "",
         status: "active",
       });
 
@@ -96,7 +96,7 @@ const MechanicList: React.FC = () => {
       setEditMechanicId(null);
       setFormData({
         mechanic_code: "",
-        nama_mechanic: "",
+        nama_mekanik: "",
         status: "active",
       });
     } else {
@@ -108,7 +108,7 @@ const MechanicList: React.FC = () => {
     setEditMechanicId(m.id);
     setFormData({
       mechanic_code: m.mechanic_code,
-      nama_mechanic: m.nama_mechanic,
+      nama_mekanik: m.nama_mekanik,
       status: m.status,
     });
     setIsFormOpen(true);
@@ -116,33 +116,33 @@ const MechanicList: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     const result = await Swal.fire({
-      title: 'Hapus Mekanik?',
-      text: 'Anda yakin ingin menghapus mekanik ini?',
-      icon: 'warning',
+      title: "Hapus Mekanik?",
+      text: "Anda yakin ingin menghapus mekanik ini?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#f43f5e',
-      cancelButtonColor: '#94a3b8',
-      confirmButtonText: 'Ya, Hapus!',
-      cancelButtonText: 'Batal'
+      confirmButtonColor: "#f43f5e",
+      cancelButtonColor: "#94a3b8",
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal",
     });
 
     if (result.isConfirmed) {
       try {
         await apiClient.delete(`/mechanics/${id}`);
         Swal.fire({
-          icon: 'success',
-          title: 'Terhapus!',
-          text: 'Data mekanik berhasil dihapus.',
+          icon: "success",
+          title: "Terhapus!",
+          text: "Data mekanik berhasil dihapus.",
           showConfirmButton: false,
-          timer: 1500
+          timer: 1500,
         });
         fetchMechanics();
       } catch (err: any) {
         console.error("Failed to delete mechanic", err);
         Swal.fire({
-          icon: 'error',
-          title: 'Gagal',
-          text: err.response?.data?.message || 'Gagal menghapus mekanik.'
+          icon: "error",
+          title: "Gagal",
+          text: err.response?.data?.message || "Gagal menghapus mekanik.",
         });
       }
     }
@@ -228,7 +228,7 @@ const MechanicList: React.FC = () => {
                   <tr key={m.id}>
                     <td>{m.mechanic_code}</td>
                     <td style={{ fontWeight: 500, color: "#0f2c4a" }}>
-                      {m.nama_mechanic}
+                      {m.nama_mekanik}
                     </td>
                     <td>{getStatusBadge(m.status)}</td>
                     <td>
@@ -281,9 +281,9 @@ const MechanicList: React.FC = () => {
                   type="text"
                   className={styles.formInput}
                   placeholder="Masukkan nama mekanik"
-                  value={formData.nama_mechanic}
+                  value={formData.nama_mekanik}
                   onChange={(e) =>
-                    setFormData({ ...formData, nama_mechanic: e.target.value })
+                    setFormData({ ...formData, nama_mekanik: e.target.value })
                   }
                 />
               </div>

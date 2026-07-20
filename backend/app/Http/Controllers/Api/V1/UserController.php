@@ -93,9 +93,9 @@ class UserController extends Controller
         DB::beginTransaction();
         try {
             $user->update([
-                'nama_user' => $request->input('nama_user', $user->nama_user),
-                'role' => $request->input('role', $user->role),
-                'status' => $request->input('status', $user->status),
+                'nama_user' => $validated['nama_user'] ?? $user->nama_user,
+                'role' => $validated['role'] ?? $user->role,
+                'status' => $validated['status'] ?? $user->status,
             ]);
 
             if ($request->has('username') || $request->filled('password')) {
@@ -120,7 +120,7 @@ class UserController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal memperbarui user',
+                'message' => $e->getMessage() . " | " . $e->getFile() . ":" . $e->getLine(),
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -128,12 +128,11 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $user->status = UserStatus::Inactive;
-        $user->save();
+        $user->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'User berhasil diarsipkan (inactive)',
+            'message' => 'User berhasil dihapus dari sistem',
         ]);
     }
 }

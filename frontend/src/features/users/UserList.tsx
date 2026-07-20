@@ -9,7 +9,7 @@ interface User {
   nama_user: string;
   role: string;
   status: string;
-  login_account?: {
+  loginAccount?: {
     username: string;
   };
 }
@@ -129,7 +129,7 @@ const UserList: React.FC = () => {
     setEditUserId(u.id);
     setFormData({
       nama_user: u.nama_user,
-      username: u.login_account?.username || "",
+      username: u.loginAccount?.username || "",
       role: u.role,
       status: u.status,
       password: "",
@@ -265,7 +265,7 @@ const UserList: React.FC = () => {
                     <td style={{ fontWeight: 500, color: "#0f2c4a" }}>
                       {u.nama_user}
                     </td>
-                    <td>{u.login_account?.username || "-"}</td>
+                    <td>{u.loginAccount?.username || "-"}</td>
                     <td>{mapRoleReadable(u.role)}</td>
                     <td>{getStatusBadge(u.status)}</td>
                     <td>
