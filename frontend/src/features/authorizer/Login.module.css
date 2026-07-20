@@ -24,6 +24,7 @@
   height: auto;
   margin-bottom: 40px;
   object-fit: contain;
+  animation: float 5s ease-in-out infinite;
 }
 
 .systemLabel {
@@ -32,6 +33,9 @@
   letter-spacing: 1px;
   margin-bottom: 12px;
   color: #93c5fd;
+  opacity: 0;
+  animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.2s;
 }
 
 .mainTitle {
@@ -40,6 +44,9 @@
   line-height: 1.25;
   margin: 0 0 15px 0;
   color: #ffffff;
+  opacity: 0;
+  animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.4s;
 }
 
 .subTitle {
@@ -47,6 +54,9 @@
   font-weight: 400;
   margin: 0 0 45px 0;
   color: #cbd5e1;
+  opacity: 0;
+  animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.6s;
 }
 
 .description {
@@ -55,6 +65,9 @@
   color: #94a3b8;
   max-width: 85%;
   margin: 0;
+  opacity: 0;
+  animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.8s;
 }
 
 /* RIGHT PANEL */
@@ -74,6 +87,9 @@
   padding: 50px;
   width: 100%;
   max-width: 460px;
+  opacity: 0;
+  animation: slideUpFade 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.3s;
 }
 
 .cardHeader h2 {
@@ -246,3 +262,28 @@
     padding: 40px 30px;
   }
 }
+
+/* Animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
