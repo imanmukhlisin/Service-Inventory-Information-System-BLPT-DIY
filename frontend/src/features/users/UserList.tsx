@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { apiClient } from "../../lib/api";
+import { Trash2 } from "lucide-react";
 import styles from "./UserList.module.css";
 
 interface User {
@@ -16,6 +17,7 @@ const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editUserId, setEditUserId] = useState<number | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -23,6 +25,7 @@ const UserList: React.FC = () => {
     username: "",
     role: "",
     status: "active",
+    password: "",
   });
 
   const fetchUsers = async () => {
@@ -42,7 +45,38 @@ const UserList: React.FC = () => {
   }, []);
 
   const handleToggleForm = () => {
-    setIsFormOpen(!isFormOpen);
+    if (isFormOpen) {
+      setIsFormOpen(false);
+      setEditUserId(null);
+      setFormData({
+        nama_user: "",
+        username: "",
+        role: "",
+        status: "active",
+        password: "",
+      });
+    } else {
+      setIsFormOpen(true);
+    }
+  };
+
+  const handleEdit = (u: User) => {
+    setEditUserId(u.id);
+    setFormData({
+      nama_user: u.nama_user,
+      username: u.login_account?.username || "",
+      role: u.role,
+      status: u.status,
+      password: "",
+    });
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm("Yakin ingin menghapus pengguna ini?")) {
+      // Stub for actual API deletion logic
+      console.log("Delete user", id);
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -144,10 +178,18 @@ const UserList: React.FC = () => {
                     <td>{getStatusBadge(u.status)}</td>
                     <td>
                       <div className={styles.actionLinks}>
-                        <span className={styles.actionLink}>Lihat</span>
-                        {u.status === "active" && (
-                          <span className={styles.actionLink}>Edit</span>
-                        )}
+                        <span
+                          className={styles.actionLink}
+                          onClick={() => handleEdit(u)}
+                        >
+                          Edit
+                        </span>
+                        <Trash2
+                          size={18}
+                          className={styles.actionIconDanger}
+                          onClick={() => handleDelete(u.id)}
+                          style={{ cursor: "pointer", color: "#f43f5e" }}
+                        />
                       </div>
                     </td>
                   </tr>
@@ -164,7 +206,9 @@ const UserList: React.FC = () => {
             className={styles.modalContent}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className={styles.panelTitle}>Form Tambah Pengguna</h2>
+            <h2 className={styles.panelTitle}>
+              {editUserId ? "Edit Pengguna" : "Form Tambah Pengguna"}
+            </h2>
             <div className={styles.formGrid}>
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>Nama Lengkap *</label>
@@ -220,6 +264,26 @@ const UserList: React.FC = () => {
                   <option value="active">Aktif</option>
                   <option value="inactive">Tidak Aktif</option>
                 </select>
+              </div>
+
+              {/* Password overrides */}
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>
+                  {editUserId ? "Password Baru" : "Password *"}
+                </label>
+                <input
+                  type="password"
+                  className={styles.formInput}
+                  placeholder={
+                    editUserId
+                      ? "Kosongkan jika tak diubah"
+                      : "Masukkan password baru"
+                  }
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                />
               </div>
             </div>
 

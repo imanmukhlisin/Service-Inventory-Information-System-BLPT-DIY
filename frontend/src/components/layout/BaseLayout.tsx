@@ -92,6 +92,9 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
                 />
                 <span>BLPT DIY</span>
                 <small>UPJ Otomotif & AHASS</small>
+                <div className={styles.roleBadgeDisplay}>
+                  {user?.role ? user.role.replace("_", " ") : "Admin"}
+                </div>
               </>
             )}
           </div>
@@ -113,19 +116,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
         </nav>
 
         <div className={styles.sidebarFooter}>
-          <div
-            className={styles.navItem}
-            style={{
-              pointerEvents: "none",
-              color: "white",
-              marginBottom: "8px",
-              fontSize: "13px",
-              padding: "12px 16px",
-              fontWeight: "bold",
-            }}
-          >
-            {isSidebarOpen && <span>Admin</span>}
-          </div>
           <button onClick={logout} className={styles.logoutBtn}>
             {isSidebarOpen && <span>Keluar</span>}
           </button>

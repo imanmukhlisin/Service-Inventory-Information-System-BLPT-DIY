@@ -47,6 +47,17 @@
   white-space: nowrap;
 }
 
+.roleBadgeDisplay {
+  margin-top: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #bae6fd;
+  text-transform: capitalize;
+}
+
 .brand small {
   font-size: 11px;
   font-weight: 400;
