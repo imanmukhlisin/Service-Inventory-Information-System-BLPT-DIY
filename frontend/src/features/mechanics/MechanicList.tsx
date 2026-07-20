@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { apiClient } from "../../lib/api";
 import { Trash2 } from "lucide-react";
+import Swal from "sweetalert2";
 import styles from "./MechanicList.module.css";
 
 interface Mechanic {
@@ -44,7 +45,11 @@ const MechanicList: React.FC = () => {
   const handleSave = async () => {
     try {
       if (!formData.nama_mechanic || !formData.status) {
-        alert("Harap isi nama mekanik dan status.");
+        Swal.fire({
+          icon: "warning",
+          title: "Peringatan",
+          text: "Harap isi nama mekanik dan status.",
+        });
         return;
       }
 
@@ -65,12 +70,23 @@ const MechanicList: React.FC = () => {
         nama_mechanic: "",
         status: "active",
       });
+
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: "Data mekanik berhasil disimpan.",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (err: any) {
       console.error("Gagal menyimpan data mekanik", err);
-      alert(
-        err.response?.data?.message ||
+      Swal.fire({
+        icon: "error",
+        title: "Gagal Menyimpan",
+        text:
+          err.response?.data?.message ||
           "Terjadi kesalahan saat menyimpan data mekanik.",
-      );
+      });
     }
   };
 

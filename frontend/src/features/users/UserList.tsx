@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { apiClient } from "../../lib/api";
 import { Trash2, Eye, EyeOff } from "lucide-react";
+import Swal from "sweetalert2";
 import styles from "./UserList.module.css";
 
 interface User {
@@ -48,11 +49,19 @@ const UserList: React.FC = () => {
   const handleSave = async () => {
     try {
       if (!formData.nama_user || !formData.username || !formData.role) {
-        alert("Harap lengkapi semua isian wajib (*).");
+        Swal.fire({
+          icon: "warning",
+          title: "Peringatan",
+          text: "Harap lengkapi semua isian wajib (*).",
+        });
         return;
       }
       if (!editUserId && !formData.password) {
-        alert("Sandi diperlukan untuk pengguna baru.");
+        Swal.fire({
+          icon: "warning",
+          title: "Peringatan",
+          text: "Sandi diperlukan untuk pengguna baru.",
+        });
         return;
       }
 
@@ -79,12 +88,23 @@ const UserList: React.FC = () => {
         password: "",
         status: "active",
       });
+
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: "Data pengguna berhasil disimpan.",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (err: any) {
       console.error("Failed to save user:", err);
-      alert(
-        err.response?.data?.message ||
+      Swal.fire({
+        icon: "error",
+        title: "Gagal Menyimpan",
+        text:
+          err.response?.data?.message ||
           "Terjadi kesalahan saat menyimpan pengguna.",
-      );
+      });
     }
   };
 

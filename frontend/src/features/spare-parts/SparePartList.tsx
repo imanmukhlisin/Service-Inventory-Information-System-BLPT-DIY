@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { apiClient } from "../../lib/api";
 import { Trash2 } from "lucide-react";
+import Swal from "sweetalert2";
 import styles from "./SparePartList.module.css";
 
 interface SparePart {
@@ -109,7 +110,11 @@ const SparePartList: React.FC = () => {
         !formData.kategori ||
         !formData.harga_jual
       ) {
-        alert("Harap lengkapi field wajib (*).");
+        Swal.fire({
+          icon: "warning",
+          title: "Peringatan",
+          text: "Harap lengkapi field wajib (*).",
+        });
         return;
       }
 
@@ -134,12 +139,23 @@ const SparePartList: React.FC = () => {
         stok_minimum: 0,
         status: "active",
       });
+
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: "Data suku cadang berhasil disimpan.",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (err: any) {
       console.error("Gagal menyimpan data suku cadang", err);
-      alert(
-        err.response?.data?.message ||
+      Swal.fire({
+        icon: "error",
+        title: "Gagal Menyimpan",
+        text:
+          err.response?.data?.message ||
           "Terjadi kesalahan saat menyimpan data suku cadang.",
-      );
+      });
     }
   };
 

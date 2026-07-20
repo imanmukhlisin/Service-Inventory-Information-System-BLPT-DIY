@@ -36,7 +36,7 @@ class UserController extends Controller
             'nama_user' => 'required|string|max:150',
             'role' => ['required', Rule::enum(UserRole::class)],
             'status' => ['required', Rule::enum(UserStatus::class)],
-            'username' => 'required|string|max:150|unique:login_accounts,username',
+            'username' => 'required|string|max:150|unique:logins,username',
             'password' => 'required|string|min:6',
         ]);
 
@@ -86,7 +86,7 @@ class UserController extends Controller
             'nama_user' => 'sometimes|string|max:150',
             'role' => ['sometimes', Rule::enum(UserRole::class)],
             'status' => ['sometimes', Rule::enum(UserStatus::class)],
-            'username' => 'sometimes|string|max:150|unique:login_accounts,username,' . $user->id . ',user_id',
+            'username' => 'sometimes|string|max:150|unique:logins,username,' . $user->id . ',user_id',
             'password' => 'nullable|string|min:6',
         ]);
 
