@@ -1,27 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { apiClient } from "../../lib/api";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import styles from "./AdminDashboard.module.css";
 
 interface DashboardMetrics {
   users_total: number;
   mechanics_total: number;
   spare_parts_total: number;
-  low_stock_count: number;
-  recent_activities: Array<{
-    time: string;
-    activity: string;
-    user: string;
-    timestamp?: number;
-  }>;
 }
+
+// Dummy activity data for the chart visualization
+const weeklyActivityData = [
+  { name: "Senin", aktivitas: 12 },
+  { name: "Selasa", aktivitas: 19 },
+  { name: "Rabu", aktivitas: 15 },
+  { name: "Kamis", aktivitas: 24 },
+  { name: "Jumat", aktivitas: 22 },
+  { name: "Sabtu", aktivitas: 30 },
+  { name: "Minggu", aktivitas: 18 },
+];
 
 const AdminDashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<DashboardMetrics>({
     users_total: 0,
     mechanics_total: 0,
     spare_parts_total: 0,
-    low_stock_count: 0,
-    recent_activities: [],
   });
 
   useEffect(() => {
@@ -33,8 +44,6 @@ const AdminDashboard: React.FC = () => {
           users_total: stats.users_total || 0,
           mechanics_total: stats.mechanics_total || 0,
           spare_parts_total: stats.spare_parts_total || 0,
-          low_stock_count: stats.low_stock_count || 0,
-          recent_activities: stats.recent_activities || [],
         });
       } catch (error) {
         console.error("Failed to load dashboard metrics", error);
@@ -73,7 +82,7 @@ const AdminDashboard: React.FC = () => {
           </div>
           <div>
             <p className={styles.metricValue}>{metrics.users_total}</p>
-            <p className={styles.metricSubtext}>4 peran pengguna</p>
+            <p className={styles.metricSubtext}>4 peran pengguna sistem</p>
           </div>
         </div>
 
@@ -131,108 +140,77 @@ const AdminDashboard: React.FC = () => {
           </div>
           <div>
             <p className={styles.metricValue}>{metrics.spare_parts_total}</p>
-            <p className={styles.metricSubtext}>24 kategori</p>
-          </div>
-        </div>
-
-        {/* Card 4 */}
-        <div className={styles.metricCard}>
-          <div className={styles.metricTop}>
-            <div
-              className={styles.metricIconWrap}
-              style={{ background: "#d97706" }}
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                <line x1="12" y1="9" x2="12" y2="13"></line>
-                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-              </svg>
-            </div>
-            <h3 className={styles.metricTitle}>Stok Minimum</h3>
-          </div>
-          <div>
-            <p className={styles.metricValue}>{metrics.low_stock_count}</p>
-            <p className={styles.metricSubtext}>Perlu ditindaklanjuti</p>
+            <p className={styles.metricSubtext}>Total keseluruhan kategori</p>
           </div>
         </div>
       </div>
 
-      <div className={styles.chartsGrid}>
-        {/* Recent Activity Panel */}
+      <div className={styles.chartsGridFullWidth}>
+        {/* Interactive Chart Panel */}
         <div className={styles.chartPanel}>
           <div className={styles.panelHeader}>
-            <h2 className={styles.panelTitle}>Aktivitas Terbaru</h2>
+            <h2 className={styles.panelTitle}>Aktivitas Sistem Mingguan</h2>
           </div>
-          <div className={styles.panelContent} style={{ padding: 0 }}>
-            <table className={styles.activityTable}>
-              <thead>
-                <tr>
-                  <th>Waktu</th>
-                  <th>Aktivitas</th>
-                  <th>Petugas</th>
-                </tr>
-              </thead>
-              <tbody>
-                {metrics.recent_activities.length > 0 ? (
-                  metrics.recent_activities.map((act, idx) => (
-                    <tr key={idx}>
-                      <td>{act.time}</td>
-                      <td>{act.activity}</td>
-                      <td>{act.user}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={3}
-                      style={{ textAlign: "center", color: "#94a3b8" }}
-                    >
-                      Belum ada aktivitas
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Master Data Status Panel */}
-        <div className={styles.chartPanel}>
-          <div className={styles.panelHeader}>
-            <h2 className={styles.panelTitle}>Status Data Master</h2>
-          </div>
-          <div className={styles.panelContent}>
-            <div className={styles.statusWidget}>
-              <div>
-                <p className={styles.statusLabel}>
-                  Kelengkapan data suku cadang
-                </p>
-                <div className={styles.progressBarContainer}>
-                  <div
-                    className={styles.progressBarFill}
-                    style={{ width: "87%" }}
-                  ></div>
-                </div>
-                <p className={styles.progressText}>87%</p>
-              </div>
-
-              <div style={{ marginTop: "20px" }}>
-                <p className={styles.statusLabel}>Akun pengguna aktif</p>
-                <h3 className={styles.statusValue}>
-                  {metrics.users_total} dari {metrics.users_total + 1} akun
-                </h3>
-                <span className={styles.statusBadge}>1 Tidak Aktif</span>
-              </div>
-            </div>
+          <div className={styles.panelContent} style={{ height: "400px" }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={weeklyActivityData}
+                margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient
+                    id="colorAktivitas"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="5%" stopColor="#0284c7" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#0284c7" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#f1f5f9"
+                />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#64748b", fontSize: 13 }}
+                  dy={10}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#64748b", fontSize: 13 }}
+                  dx={-10}
+                />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "8px",
+                    border: "none",
+                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+                  }}
+                  labelStyle={{ fontWeight: "bold", color: "#0f2c4a" }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="aktivitas"
+                  stroke="#0284c7"
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#colorAktivitas)"
+                  activeDot={{
+                    r: 6,
+                    fill: "#0ea5e9",
+                    stroke: "#fff",
+                    strokeWidth: 2,
+                  }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
