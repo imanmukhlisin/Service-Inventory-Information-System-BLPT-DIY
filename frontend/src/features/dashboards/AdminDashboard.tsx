@@ -7,6 +7,12 @@ interface DashboardMetrics {
   mechanics_total: number;
   spare_parts_total: number;
   low_stock_count: number;
+  recent_activities: Array<{
+    time: string;
+    activity: string;
+    user: string;
+    timestamp?: number;
+  }>;
 }
 
 const AdminDashboard: React.FC = () => {
@@ -15,6 +21,7 @@ const AdminDashboard: React.FC = () => {
     mechanics_total: 0,
     spare_parts_total: 0,
     low_stock_count: 0,
+    recent_activities: [],
   });
 
   useEffect(() => {
@@ -27,6 +34,7 @@ const AdminDashboard: React.FC = () => {
           mechanics_total: stats.mechanics_total || 0,
           spare_parts_total: stats.spare_parts_total || 0,
           low_stock_count: stats.low_stock_count || 0,
+          recent_activities: stats.recent_activities || [],
         });
       } catch (error) {
         console.error("Failed to load dashboard metrics", error);
@@ -174,26 +182,24 @@ const AdminDashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>08.12</td>
-                  <td>Menambah data suku cadang</td>
-                  <td>Admin</td>
-                </tr>
-                <tr>
-                  <td>09.05</td>
-                  <td>Memperbarui data mekanik</td>
-                  <td>Admin</td>
-                </tr>
-                <tr>
-                  <td>10.20</td>
-                  <td>Menonaktifkan akun lama</td>
-                  <td>Admin</td>
-                </tr>
-                <tr>
-                  <td>11.08</td>
-                  <td>Mengubah batas stok minimum</td>
-                  <td>Admin</td>
-                </tr>
+                {metrics.recent_activities.length > 0 ? (
+                  metrics.recent_activities.map((act, idx) => (
+                    <tr key={idx}>
+                      <td>{act.time}</td>
+                      <td>{act.activity}</td>
+                      <td>{act.user}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={3}
+                      style={{ textAlign: "center", color: "#94a3b8" }}
+                    >
+                      Belum ada aktivitas
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
