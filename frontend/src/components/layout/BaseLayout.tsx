@@ -8,6 +8,7 @@ import {
   FileText,
   Menu,
   X,
+  Users,
 } from "lucide-react";
 import { useAuth } from "../../app/AuthContext";
 import styles from "./BaseLayout.module.css";
@@ -28,14 +29,11 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
     menu.push({ path: "dashboard", icon: LayoutDashboard, label: "Dashboard" });
 
     if (role === "admin") {
-      menu.push({ path: "users", label: "Data Pengguna" });
-      menu.push({ path: "mechanics", label: "Data Mekanik" });
-      menu.push({
-        path: "categories",
-        label: "Kategori Suku Cadang",
-      });
+      menu.push({ path: "users", icon: Users, label: "Data Pengguna" });
+      menu.push({ path: "mechanics", icon: Wrench, label: "Data Mekanik" });
       menu.push({
         path: "spare-parts",
+        icon: Package,
         label: "Master Suku Cadang",
       });
     } else if (role === "front_office") {
