@@ -65,7 +65,7 @@ class UserController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal membuat user',
+                'message' => $e->getMessage() . " | " . $e->getFile() . ":" . $e->getLine(),
                 'error' => $e->getMessage()
             ], 500);
         }
