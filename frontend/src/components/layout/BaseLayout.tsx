@@ -84,6 +84,14 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
           <div className={styles.brand}>
             {isSidebarOpen && (
               <>
+                <img
+                  src="/logo-blpt.png"
+                  alt="Logo BLPT DIY"
+                  className={styles.sidebarLogo}
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
                 <span>BLPT DIY</span>
                 <small>UPJ Otomotif & AHASS</small>
               </>
