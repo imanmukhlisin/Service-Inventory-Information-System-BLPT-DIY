@@ -159,9 +159,11 @@ const UserList: React.FC = () => {
       </div>
 
       {isFormOpen && (
-        <div className={styles.bottomSplit}>
-          {/* Form Create */}
-          <div className={styles.panelCard}>
+        <div className={styles.modalOverlay} onClick={handleToggleForm}>
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 className={styles.panelTitle}>Form Tambah Pengguna</h2>
             <div className={styles.formGrid}>
               <div className={styles.formGroup}>
@@ -232,35 +234,6 @@ const UserList: React.FC = () => {
               <button type="button" className={styles.btnSave}>
                 Simpan
               </button>
-            </div>
-          </div>
-
-          {/* Access Rules Widget */}
-          <div className={styles.panelCard}>
-            <h2 className={styles.panelTitle}>Aturan Akses</h2>
-            <div className={styles.rulesList}>
-              <div className={styles.ruleItem}>
-                <span className={styles.rolePill}>Admin</span>
-                <p className={styles.ruleDesc}>
-                  Mengelola akun dan data master
-                </p>
-              </div>
-              <div className={styles.ruleItem}>
-                <span className={styles.rolePill}>Front Office</span>
-                <p className={styles.ruleDesc}>
-                  Mencatat transaksi dan melihat stok
-                </p>
-              </div>
-              <div className={styles.ruleItem}>
-                <span className={styles.rolePill}>Koperasi</span>
-                <p className={styles.ruleDesc}>
-                  Mengelola order dan penerimaan
-                </p>
-              </div>
-              <div className={styles.ruleItem}>
-                <span className={styles.rolePill}>Kepala UPJ</span>
-                <p className={styles.ruleDesc}>Melihat dashboard dan laporan</p>
-              </div>
             </div>
           </div>
         </div>
