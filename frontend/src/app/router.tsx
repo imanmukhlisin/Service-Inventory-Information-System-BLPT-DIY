@@ -9,6 +9,7 @@ import BaseLayout from "../components/layout/BaseLayout";
 import AdminDashboard from "../features/dashboards/AdminDashboard";
 import UserList from "../features/users/UserList";
 import MechanicList from "../features/mechanics/MechanicList";
+import SparePartList from "../features/spare-parts/SparePartList";
 // FO
 // import KasirPage from '../features/transactions/KasirPage';
 
@@ -67,6 +68,7 @@ export const router = createBrowserRouter([
           { path: "dashboard", element: <AdminDashboard /> },
           { path: "users", element: <UserList /> },
           { path: "mechanics", element: <MechanicList /> },
+          { path: "spare-parts", element: <SparePartList /> },
         ],
       },
     ],
