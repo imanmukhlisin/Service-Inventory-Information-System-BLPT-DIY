@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogIn, Key, User as UserIcon, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
 import styles from "./Login.module.css";
@@ -9,6 +9,7 @@ const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -50,99 +51,127 @@ const Login: React.FC = () => {
         }
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Username atau password salah.");
+      setError(
+        err.response?.data?.message || "Nama pengguna atau kata sandi salah.",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className={styles.loginContainer}>
-      <div className={styles.loginCard}>
-        <div className={styles.brandBox}>
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Logo_Pendidikan_Nasional_%28Indonesia%29.svg"
-            alt="Logo"
-            className={styles.brandIcon}
-          />
-          <h2>SISTEM INFORMASI UPJ</h2>
-          <p>AHASS BLPT YOGYAKARTA</p>
-        </div>
+    <div className={styles.pageWrapper}>
+      {/* LEFT PANEL - Branding */}
+      <div className={styles.leftPanel}>
+        {/* Placeholder for the Logo, loaded from the public folder */}
+        <img
+          src="/logo-blpt.png"
+          alt="Logo Pemda / Instansi"
+          className={styles.brandLogo}
+          onError={(e) => {
+            // Fallback gracefully if logo is not yet placed
+            e.currentTarget.src =
+              "https://upload.wikimedia.org/wikipedia/commons/9/9d/Logo_Pendidikan_Nasional_%28Indonesia%29.svg";
+          }}
+        />
 
-        <form className={styles.loginForm} onSubmit={handleLogin}>
-          {error && (
-            <div className={styles.errorBox}>
-              <span>{error}</span>
-            </div>
-          )}
+        <p className={styles.systemLabel}>SISTEM INFORMASI</p>
+        <h1 className={styles.mainTitle}>
+          Penjualan Suku Cadang
+          <br />
+          dan Jasa Servis
+        </h1>
+        <h3 className={styles.subTitle}>UPJ Otomotif & AHASS BLPT DIY</h3>
 
-          <div className={styles.formGroup}>
-            <label>Username</label>
-            <div className={styles.inputWrapper}>
-              <UserIcon size={18} className={styles.inputIcon} />
-              <input
-                type="text"
-                placeholder="Masukkan username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                autoComplete="username"
-              />
-            </div>
+        <p className={styles.description}>
+          Pengelolaan transaksi dan persediaan yang terintegrasi, akurat, dan
+          mudah dipantau.
+        </p>
+      </div>
+
+      {/* RIGHT PANEL - Login Form */}
+      <div className={styles.rightPanel}>
+        <div className={styles.loginCard}>
+          <div className={styles.cardHeader}>
+            <h2>Masuk ke Sistem</h2>
+            <p>Gunakan akun yang telah diberikan oleh administrator.</p>
           </div>
 
-          <div className={styles.formGroup}>
-            <label>Password</label>
-            <div className={styles.inputWrapper}>
-              <Key size={18} className={styles.inputIcon} />
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Masukkan password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-                style={{ paddingRight: "40px" }}
-              />
+          <form onSubmit={handleLogin}>
+            {error && <div className={styles.errorBox}>{error}</div>}
+
+            <div className={styles.formGroup}>
+              <label>Nama Pengguna</label>
+              <div className={styles.inputWrapper}>
+                <input
+                  type="text"
+                  placeholder="Masukkan nama pengguna"
+                  className={styles.inputField}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  autoComplete="username"
+                />
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Kata Sandi</label>
+              <div className={styles.inputWrapper}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Masukkan kata sandi"
+                  className={styles.inputField}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  style={{ paddingRight: "40px" }}
+                />
+                <button
+                  type="button"
+                  className={styles.eyeBtn}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <div className={styles.optionsRow}>
+              <label className={styles.rememberMe}>
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                />
+                Ingat saya
+              </label>
               <button
                 type="button"
-                className={styles.eyeBtn}
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: "absolute",
-                  right: "10px",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#6c757d",
-                }}
+                className={styles.forgotPassword}
+                onClick={() =>
+                  alert(
+                    "Silakan hubungi administrator untuk mereset kata sandi Anda.",
+                  )
+                }
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                Lupa kata sandi?
               </button>
             </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting || !username || !password}
+              className={styles.submitBtn}
+            >
+              {isSubmitting ? "Memproses..." : "Masuk"}
+            </button>
+          </form>
+
+          <div className={styles.cardFooter}>
+            <p>Sistem internal BLPT DIY • Akses terbatas</p>
           </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting || !username || !password}
-            className={styles.loginBtn}
-          >
-            {isSubmitting ? (
-              "Loading..."
-            ) : (
-              <>
-                <LogIn size={18} />
-                <span>Masuk</span>
-              </>
-            )}
-          </button>
-        </form>
-
-        <div className={styles.footerNote}>
-          &copy; 2026 BLPT DIY. Hak Cipta Dilindungi.
         </div>
       </div>
     </div>
