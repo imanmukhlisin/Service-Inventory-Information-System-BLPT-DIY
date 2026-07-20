@@ -2,13 +2,10 @@ import React, { useState } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
-  Users,
   Wrench,
   Package,
   ShoppingCart,
   FileText,
-  Pickaxe,
-  LogOut,
   Menu,
   X,
 } from "lucide-react";
