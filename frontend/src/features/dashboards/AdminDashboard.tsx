@@ -152,7 +152,7 @@ const AdminDashboard: React.FC = () => {
             <h2 className={styles.panelTitle}>Aktivitas Sistem Mingguan</h2>
           </div>
           <div className={styles.panelContent} style={{ height: "400px" }}>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={350}>
               <AreaChart
                 data={weeklyActivityData}
                 margin={{ top: 20, right: 30, left: 0, bottom: 0 }}

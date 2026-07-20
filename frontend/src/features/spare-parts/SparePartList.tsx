@@ -161,33 +161,33 @@ const SparePartList: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     const result = await Swal.fire({
-      title: 'Hapus Suku Cadang?',
-      text: 'Anda yakin ingin menghapus data suku cadang ini?',
-      icon: 'warning',
+      title: "Hapus Suku Cadang?",
+      text: "Anda yakin ingin menghapus data suku cadang ini?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#f43f5e',
-      cancelButtonColor: '#94a3b8',
-      confirmButtonText: 'Ya, Hapus!',
-      cancelButtonText: 'Batal'
+      confirmButtonColor: "#f43f5e",
+      cancelButtonColor: "#94a3b8",
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal",
     });
 
     if (result.isConfirmed) {
       try {
         await apiClient.delete(`/spare-parts/${id}`);
         Swal.fire({
-          icon: 'success',
-          title: 'Terhapus!',
-          text: 'Data suku cadang berhasil dihapus.',
+          icon: "success",
+          title: "Terhapus!",
+          text: "Data suku cadang berhasil dihapus.",
           showConfirmButton: false,
-          timer: 1500
+          timer: 1500,
         });
         fetchParts();
       } catch (err: any) {
         console.error("Failed to delete spare part", err);
         Swal.fire({
-          icon: 'error',
-          title: 'Gagal',
-          text: err.response?.data?.message || 'Gagal menghapus suku cadang.'
+          icon: "error",
+          title: "Gagal",
+          text: err.response?.data?.message || "Gagal menghapus suku cadang.",
         });
       }
     }

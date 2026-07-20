@@ -149,14 +149,22 @@ const MechanicList: React.FC = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const isActive = status === "active";
-    return (
-      <span
-        className={`${styles.statusBadge} ${isActive ? styles.statusActive : styles.statusInactive}`}
-      >
-        {isActive ? "Aktif" : "Tidak Aktif"}
-      </span>
-    );
+    switch (status?.toLowerCase()) {
+      case "active":
+      case "aktif":
+        return (
+          <span className={`${styles.badge} ${styles.badgeActive}`}>Aktif</span>
+        );
+      case "inactive":
+      case "tidak aktif":
+        return (
+          <span className={`${styles.badge} ${styles.badgeInactive}`}>
+            Tidak Aktif
+          </span>
+        );
+      default:
+        return <span>{status}</span>;
+    }
   };
 
   return (
