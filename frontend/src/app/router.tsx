@@ -8,6 +8,7 @@ import BaseLayout from "../components/layout/BaseLayout";
 // Admin
 import AdminDashboard from "../features/dashboards/AdminDashboard";
 import UserList from "../features/users/UserList";
+import MechanicList from "../features/mechanics/MechanicList";
 // FO
 // import KasirPage from '../features/transactions/KasirPage';
 
@@ -65,6 +66,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "dashboard", element: <AdminDashboard /> },
           { path: "users", element: <UserList /> },
+          { path: "mechanics", element: <MechanicList /> },
         ],
       },
     ],
