@@ -45,6 +45,49 @@ const UserList: React.FC = () => {
     fetchUsers();
   }, []);
 
+  const handleSave = async () => {
+    try {
+      if (!formData.nama_user || !formData.username || !formData.role) {
+        alert("Harap lengkapi semua isian wajib (*).");
+        return;
+      }
+      if (!editUserId && !formData.password) {
+        alert("Sandi diperlukan untuk pengguna baru.");
+        return;
+      }
+
+      const payload = { ...formData };
+      if (editUserId && !payload.password) {
+        delete (payload as any).password;
+      }
+
+      if (editUserId) {
+        await apiClient.put(`/users/${editUserId}`, payload);
+      } else {
+        await apiClient.post("/users", payload);
+      }
+
+      // Cleanup on success
+      fetchUsers();
+      setIsFormOpen(false);
+      setEditUserId(null);
+      setShowPassword(false);
+      setFormData({
+        nama_user: "",
+        username: "",
+        role: "admin",
+        password: "",
+        status: "active",
+      });
+    } catch (err: any) {
+      console.error("Failed to save user:", err);
+      alert(
+        err.response?.data?.message ||
+          "Terjadi kesalahan saat menyimpan pengguna.",
+      );
+    }
+  };
+
   const handleToggleForm = () => {
     if (isFormOpen) {
       setIsFormOpen(false);
@@ -307,7 +350,11 @@ const UserList: React.FC = () => {
               >
                 Batal
               </button>
-              <button type="button" className={styles.btnSave}>
+              <button
+                type="button"
+                className={styles.btnSave}
+                onClick={handleSave}
+              >
                 Simpan
               </button>
             </div>

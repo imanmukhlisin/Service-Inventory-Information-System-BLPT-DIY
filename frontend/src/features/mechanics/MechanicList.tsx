@@ -41,6 +41,39 @@ const MechanicList: React.FC = () => {
     fetchMechanics();
   }, []);
 
+  const handleSave = async () => {
+    try {
+      if (!formData.nama_mechanic || !formData.status) {
+        alert("Harap isi nama mekanik dan status.");
+        return;
+      }
+
+      const payload = { ...formData };
+
+      if (editMechanicId) {
+        await apiClient.put(`/mechanics/${editMechanicId}`, payload);
+      } else {
+        await apiClient.post("/mechanics", payload);
+      }
+
+      // Cleanup
+      fetchMechanics();
+      setIsFormOpen(false);
+      setEditMechanicId(null);
+      setFormData({
+        mechanic_code: "",
+        nama_mechanic: "",
+        status: "active",
+      });
+    } catch (err: any) {
+      console.error("Gagal menyimpan data mekanik", err);
+      alert(
+        err.response?.data?.message ||
+          "Terjadi kesalahan saat menyimpan data mekanik.",
+      );
+    }
+  };
+
   const handleToggleForm = () => {
     if (isFormOpen) {
       setIsFormOpen(false);
@@ -234,7 +267,11 @@ const MechanicList: React.FC = () => {
               >
                 Batal
               </button>
-              <button type="button" className={styles.btnSave}>
+              <button
+                type="button"
+                className={styles.btnSave}
+                onClick={handleSave}
+              >
                 Simpan
               </button>
             </div>

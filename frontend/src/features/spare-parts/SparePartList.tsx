@@ -101,6 +101,48 @@ const SparePartList: React.FC = () => {
     setIsFormOpen(true);
   };
 
+  const handleSave = async () => {
+    try {
+      if (
+        !formData.kode_suku_cadang ||
+        !formData.nama_suku_cadang ||
+        !formData.kategori ||
+        !formData.harga_jual
+      ) {
+        alert("Harap lengkapi field wajib (*).");
+        return;
+      }
+
+      const payload = { ...formData };
+
+      if (editPartId) {
+        await apiClient.put(`/spare-parts/${editPartId}`, payload);
+      } else {
+        await apiClient.post("/spare-parts", payload);
+      }
+
+      fetchParts();
+      setIsFormOpen(false);
+      setEditPartId(null);
+      setFormData({
+        kode_suku_cadang: "",
+        nama_suku_cadang: "",
+        kategori: "",
+        satuan: "Pcs",
+        harga_jual: 0,
+        stok_sekarang: 0,
+        stok_minimum: 0,
+        status: "active",
+      });
+    } catch (err: any) {
+      console.error("Gagal menyimpan data suku cadang", err);
+      alert(
+        err.response?.data?.message ||
+          "Terjadi kesalahan saat menyimpan data suku cadang.",
+      );
+    }
+  };
+
   const handleDelete = (id: number) => {
     if (confirm("Yakin ingin menghapus suku cadang ini?")) {
       // API call stub
@@ -377,7 +419,11 @@ const SparePartList: React.FC = () => {
               >
                 Batal
               </button>
-              <button type="button" className={styles.btnSave}>
+              <button
+                type="button"
+                className={styles.btnSave}
+                onClick={handleSave}
+              >
                 Simpan
               </button>
             </div>
