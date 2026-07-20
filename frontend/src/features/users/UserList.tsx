@@ -137,10 +137,37 @@ const UserList: React.FC = () => {
     setIsFormOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    if (confirm("Yakin ingin menghapus pengguna ini?")) {
-      // Stub for actual API deletion logic
-      console.log("Delete user", id);
+  const handleDelete = async (id: number) => {
+    const result = await Swal.fire({
+      title: "Hapus Pengguna?",
+      text: "Anda yakin ingin menghapus akun pengguna ini?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#f43f5e",
+      cancelButtonColor: "#94a3b8",
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await apiClient.delete(`/users/${id}`);
+        Swal.fire({
+          icon: "success",
+          title: "Terhapus!",
+          text: "Pengguna berhasil dihapus.",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        fetchUsers();
+      } catch (err: any) {
+        console.error("Failed to delete user", err);
+        Swal.fire({
+          icon: "error",
+          title: "Gagal",
+          text: err.response?.data?.message || "Gagal menghapus pengguna.",
+        });
+      }
     }
   };
 

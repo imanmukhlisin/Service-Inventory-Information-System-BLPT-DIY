@@ -114,10 +114,37 @@ const MechanicList: React.FC = () => {
     setIsFormOpen(true);
   };
 
-  const handleDelete = (id: number) => {
-    if (confirm("Yakin ingin menghapus mekanik ini?")) {
-      // Stub for actual API deletion logic
-      console.log("Delete mechanic", id);
+  const handleDelete = async (id: number) => {
+    const result = await Swal.fire({
+      title: 'Hapus Mekanik?',
+      text: 'Anda yakin ingin menghapus mekanik ini?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#f43f5e',
+      cancelButtonColor: '#94a3b8',
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await apiClient.delete(`/mechanics/${id}`);
+        Swal.fire({
+          icon: 'success',
+          title: 'Terhapus!',
+          text: 'Data mekanik berhasil dihapus.',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        fetchMechanics();
+      } catch (err: any) {
+        console.error("Failed to delete mechanic", err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Gagal',
+          text: err.response?.data?.message || 'Gagal menghapus mekanik.'
+        });
+      }
     }
   };
 
