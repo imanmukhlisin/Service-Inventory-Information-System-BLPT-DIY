@@ -1,25 +1,92 @@
+/* Layout and Spacing */
 .container {
-  padding: 24px;
-  background-color: var(--color-surface);
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.header h2 {
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.pageTitle {
   font-size: 1.5rem;
-  color: var(--color-text);
+  font-weight: 700;
+  color: #0f2c4a;
   margin: 0;
 }
 
-.tableWrapper {
-  overflow-x: auto;
+.pageSubtitle {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filterLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f2c4a;
+}
+
+.searchInput,
+.selectInput {
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #334155;
+  width: 240px;
+}
+
+.selectInput {
+  width: 200px;
+}
+
+.addBtn {
+  background-color: #0284c7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: max-content;
+}
+
+.addBtn:hover {
+  background-color: #0369a1;
+}
+
+/* Table Card */
+.tableCard {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
 }
 
 .table {
@@ -29,72 +96,185 @@
 
 .table th,
 .table td {
-  padding: 12px 16px;
   text-align: left;
-  border-bottom: 1px solid var(--color-border);
+  padding: 16px 24px;
 }
 
 .table th {
-  background-color: #f8f9fc;
+  background-color: #f8fafc;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: var(--color-text-light);
-  font-size: 0.875rem;
+  color: #64748b;
+  border-bottom: 1px solid #f1f5f9;
+  text-transform: capitalize;
 }
 
 .table td {
-  font-size: 0.875rem;
-  color: var(--color-text);
+  font-size: 0.85rem;
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.badge {
-  padding: 4px 8px;
-  border-radius: 4px;
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Badges */
+.statusBadge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  text-transform: uppercase;
+}
+.statusActive {
+  background-color: #dcfce7;
+  color: #166534;
+}
+.statusInactive {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+/* Actions */
+.actionLinks {
+  display: flex;
+  gap: 16px;
+}
+.actionLink {
+  color: #475569;
+  text-decoration: none;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.actionLink:hover {
+  color: #0284c7;
+}
+
+/* Form Splitted Area */
+.bottomSplit {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.panelCard {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f1f5f9;
+  padding: 30px;
+}
+
+.panelTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f2c4a;
+  margin: 0 0 28px 0;
+}
+
+/* Form specific */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.formLabel {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f2c4a;
+}
+
+.formInput,
+.formSelect {
+  padding: 12px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background-color: white;
+  color: #334155;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 36px;
+}
+
+.btnCancel {
+  padding: 11px 32px;
+  background-color: white;
+  border: 1px solid #0284c7;
+  color: #0284c7;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.btnCancel:hover {
+  background-color: #f0f9ff;
+}
+
+.btnSave {
+  padding: 11px 32px;
+  background-color: #0284c7;
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.btnSave:hover {
+  background-color: #0369a1;
+}
+
+/* Roles Help */
+.rulesList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ruleItem {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.rolePill {
   display: inline-block;
-}
-
-.badge.active {
-  background-color: rgba(46, 204, 113, 0.15);
-  color: var(--color-success);
-}
-
-.badge.inactive {
-  background-color: rgba(231, 76, 60, 0.15);
-  color: var(--color-danger);
-}
-
-.badge.admin {
-  background-color: rgba(155, 89, 182, 0.15);
-  color: #9b59b6;
-}
-
-.badge.front_office {
-  background-color: rgba(52, 152, 219, 0.15);
-  color: var(--color-primary);
-}
-
-.badge.koperasi {
-  background-color: rgba(241, 196, 15, 0.15);
-  color: #f1c40f;
-}
-
-.badge.kepala_upj {
-  background-color: rgba(230, 126, 34, 0.15);
-  color: #e67e22;
-}
-
-.loading {
-  padding: 40px;
+  padding: 6px 14px;
+  background-color: #e0f2fe;
+  color: #0284c7;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 9999px;
   text-align: center;
-  color: var(--color-text-light);
 }
 
-.error {
-  padding: 16px;
-  background-color: rgba(231, 76, 60, 0.1);
-  color: var(--color-danger);
-  border-radius: 8px;
-  margin-bottom: 16px;
+.ruleDesc {
+  font-size: 0.85rem;
+  color: #475569;
+  margin: 0;
+}
+
+@media (max-width: 1024px) {
+  .bottomSplit {
+    grid-template-columns: 1fr;
+  }
 }
