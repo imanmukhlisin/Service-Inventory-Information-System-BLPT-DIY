@@ -11,7 +11,6 @@ import {
   LogOut,
   Menu,
   X,
-  ShieldAlert,
 } from "lucide-react";
 import { useAuth } from "../../app/AuthContext";
 import styles from "./BaseLayout.module.css";
@@ -32,11 +31,14 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
     menu.push({ path: "dashboard", icon: LayoutDashboard, label: "Dashboard" });
 
     if (role === "admin") {
-      menu.push({ path: "users", icon: Users, label: "Pengguna & Akses" });
-      menu.push({ path: "mechanics", icon: Pickaxe, label: "Data Mekanik" });
+      menu.push({ path: "users", label: "Data Pengguna" });
+      menu.push({ path: "mechanics", label: "Data Mekanik" });
+      menu.push({
+        path: "categories",
+        label: "Kategori Suku Cadang",
+      });
       menu.push({
         path: "spare-parts",
-        icon: Package,
         label: "Master Suku Cadang",
       });
     } else if (role === "front_office") {
@@ -83,8 +85,12 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
       >
         <div className={styles.sidebarHeader}>
           <div className={styles.brand}>
-            <ShieldAlert size={28} className={styles.brandIcon} />
-            {isSidebarOpen && <span>UPJ AHASS</span>}
+            {isSidebarOpen && (
+              <>
+                <span>BLPT DIY</span>
+                <small>UPJ Otomotif & AHASS</small>
+              </>
+            )}
           </div>
         </div>
 
@@ -97,15 +103,27 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
                 `${styles.navItem} ${isActive ? styles.navItemActive : ""}`
               }
             >
-              <item.icon size={20} />
+              {item.icon && <item.icon size={20} />}
               {isSidebarOpen && <span>{item.label}</span>}
             </NavLink>
           ))}
         </nav>
 
         <div className={styles.sidebarFooter}>
+          <div
+            className={styles.navItem}
+            style={{
+              pointerEvents: "none",
+              color: "white",
+              marginBottom: "8px",
+              fontSize: "13px",
+              padding: "12px 16px",
+              fontWeight: "bold",
+            }}
+          >
+            {isSidebarOpen && <span>Admin</span>}
+          </div>
           <button onClick={logout} className={styles.logoutBtn}>
-            <LogOut size={20} />
             {isSidebarOpen && <span>Keluar</span>}
           </button>
         </div>
@@ -125,14 +143,16 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
             <h1 className={styles.pageTitle}>{title}</h1>
           </div>
           <div className={styles.topbarRight}>
-            <div className={styles.userInfo}>
+            <div className={styles.userInfoPill}>
+              <div className={styles.avatar}>
+                {user?.nama_user
+                  .split(" ")
+                  .map((n) => n.charAt(0))
+                  .join("")
+                  .substring(0, 2)
+                  .toUpperCase()}
+              </div>
               <span className={styles.userName}>{user?.nama_user}</span>
-              <span className={styles.userRole}>
-                {user?.role.replace("_", " ").toUpperCase()}
-              </span>
-            </div>
-            <div className={styles.avatar}>
-              {user?.nama_user.charAt(0).toUpperCase()}
             </div>
           </div>
         </header>
