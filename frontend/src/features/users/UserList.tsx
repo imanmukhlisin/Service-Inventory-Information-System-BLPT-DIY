@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { apiClient } from "../../lib/api";
-import { Trash2 } from "lucide-react";
+import { Trash2, Eye, EyeOff } from "lucide-react";
 import styles from "./UserList.module.css";
 
 interface User {
@@ -18,6 +18,7 @@ const UserList: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editUserId, setEditUserId] = useState<number | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -48,6 +49,7 @@ const UserList: React.FC = () => {
     if (isFormOpen) {
       setIsFormOpen(false);
       setEditUserId(null);
+      setShowPassword(false);
       setFormData({
         nama_user: "",
         username: "",
@@ -271,19 +273,29 @@ const UserList: React.FC = () => {
                 <label className={styles.formLabel}>
                   {editUserId ? "Password Baru" : "Password *"}
                 </label>
-                <input
-                  type="password"
-                  className={styles.formInput}
-                  placeholder={
-                    editUserId
-                      ? "Kosongkan jika tak diubah"
-                      : "Masukkan password baru"
-                  }
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                />
+                <div className={styles.passwordWrapper}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    className={`${styles.formInput} ${styles.inputWithIcon}`}
+                    placeholder={
+                      editUserId
+                        ? "Kosongkan jika tak diubah"
+                        : "Masukkan password baru"
+                    }
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                  />
+                  <button
+                    type="button"
+                    className={styles.passwordToggleBtn}
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
             </div>
 
