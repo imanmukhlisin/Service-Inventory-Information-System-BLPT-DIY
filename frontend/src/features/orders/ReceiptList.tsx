@@ -1,0 +1,408 @@
+import React, { useState, useEffect } from "react";
+import { apiClient } from "../../lib/api";
+import { useAuth } from "../../app/AuthContext";
+import Swal from "sweetalert2";
+import styles from "./ReceiptList.module.css";
+
+interface SparePart {
+  id: number;
+  nama_suku_cadang: string;
+}
+
+interface User {
+  nama_user: string;
+}
+
+interface Order {
+  id: number;
+  jumlah: number;
+  status: string;
+  created_at: string;
+  spare_part: SparePart;
+  user: User;
+  spare_part_receipt: any;
+}
+
+interface Receipt {
+  id: number;
+  jumlah_diterima: number;
+  status_verifikasi: "menunggu" | "disetujui" | "ditolak";
+  catatan: string | null;
+  created_at: string;
+  tanggal_verifikasi: string | null;
+  spare_part_order: Order;
+}
+
+const ReceiptList: React.FC = () => {
+  const { user } = useAuth();
+  const [receipts, setReceipts] = useState<Receipt[]>([]);
+  const [approvedOrders, setApprovedOrders] = useState<Order[]>([]);
+
+  // Creation State (For Koperasi)
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    spare_part_order_id: "",
+    jumlah_diterima: "1",
+    catatan: "",
+  });
+
+  useEffect(() => {
+    fetchReceipts();
+    if (user?.role === "koperasi") {
+      fetchApprovedOrders();
+    }
+  }, [user]);
+
+  const fetchReceipts = async () => {
+    try {
+      const res = await apiClient.get("/spare-part-receipts");
+      setReceipts(res.data.data);
+    } catch (err: any) {
+      console.error(err);
+      Swal.fire({ icon: "error", text: "Gagal memuat data penerimaan barang" });
+    }
+  };
+
+  const fetchApprovedOrders = async () => {
+    try {
+      const res = await apiClient.get("/spare-part-orders");
+      // Filter out orders that are NOT approved or ALREADY have a receipt attached.
+      const filtered = res.data.data.filter(
+        (o: any) => o.status === "disetujui" && !o.spare_part_receipt,
+      );
+      setApprovedOrders(filtered);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleCreateReceipt = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!formData.spare_part_order_id || !formData.jumlah_diterima) {
+        Swal.fire({ icon: "warning", text: "Lengkapi field wajib (*)" });
+        return;
+      }
+      await apiClient.post("/spare-part-receipts", formData);
+      fetchReceipts();
+      fetchApprovedOrders(); // Refresh unhandled orders
+      setIsFormOpen(false);
+      setFormData({
+        spare_part_order_id: "",
+        jumlah_diterima: "1",
+        catatan: "",
+      });
+      Swal.fire({
+        icon: "success",
+        title: "Penerimaan Dicatat",
+        text: "Barang menunggu verifikasi akhir dari Front Office.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err: any) {
+      Swal.fire({
+        icon: "error",
+        title: "Gagal membuat penerimaan",
+        text: err.response?.data?.message || err.message,
+      });
+    }
+  };
+
+  const handleVerification = async (receiptId: number, isApprove: boolean) => {
+    if (isApprove) {
+      try {
+        await apiClient.patch(
+          `/spare-part-receipts/${receiptId}/verification`,
+          {
+            status: "disetujui",
+          },
+        );
+        fetchReceipts();
+        Swal.fire({
+          icon: "success",
+          title: "Terverifikasi!",
+          text: "Stok inventori telah otomatis diperbarui sistem.",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } catch (err: any) {
+        Swal.fire({
+          icon: "error",
+          text: err.response?.data?.message || "Terjadi kesalahan",
+        });
+      }
+    } else {
+      const { value: catatan } = await Swal.fire({
+        title: "Tolak Penerimaan",
+        input: "textarea",
+        inputLabel: "Alasan Penolakan (Barang cacat/kurang)",
+        inputPlaceholder: "Cth: Kondisi box rusak dari vendor...",
+        showCancelButton: true,
+        inputValidator: (val) => {
+          if (!val) return "Alasan penolakan wajib diisi untuk investigasi!";
+          return null;
+        },
+      });
+
+      if (catatan) {
+        try {
+          await apiClient.patch(
+            `/spare-part-receipts/${receiptId}/verification`,
+            {
+              status: "ditolak",
+              catatan: catatan,
+            },
+          );
+          fetchReceipts();
+          Swal.fire({
+            icon: "success",
+            title: "Ditolak",
+            timer: 1000,
+            showConfirmButton: false,
+          });
+        } catch (err: any) {
+          Swal.fire({
+            icon: "error",
+            text: err.response?.data?.message || "Terjadi kesalahan",
+          });
+        }
+      }
+    }
+  };
+
+  const statusBadge = (s: string) => {
+    switch (s) {
+      case "menunggu":
+        return (
+          <span className={`${styles.badge} ${styles.badgeMenunggu}`}>
+            Tahap Verifikasi
+          </span>
+        );
+      case "disetujui":
+        return (
+          <span className={`${styles.badge} ${styles.badgeDisetujui}`}>
+            Stok Masuk Lunas
+          </span>
+        );
+      case "ditolak":
+        return (
+          <span className={`${styles.badge} ${styles.badgeDitolak}`}>
+            Batal Verifikasi
+          </span>
+        );
+      default:
+        return <span className={styles.badge}>{s}</span>;
+    }
+  };
+
+  const formatDate = (ds: string) => {
+    if (!ds) return "-";
+    return new Intl.DateTimeFormat("id-ID", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(ds));
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.pageHeader}>
+        <div>
+          <h1 className={styles.pageTitle}>Log Penerimaan Suku Cadang</h1>
+          <p className={styles.pageSubtitle}>
+            Catat kedatangan logistik gudang & verifikasi final stok
+          </p>
+        </div>
+        {user?.role === "koperasi" && (
+          <button
+            className={styles.btnPrimary}
+            onClick={() => setIsFormOpen(true)}
+          >
+            + Tambah Penerimaan dari Vendor
+          </button>
+        )}
+      </div>
+
+      <div className={styles.tableCard}>
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Tanggal Terima (Koperasi)</th>
+                <th>Suku Cadang</th>
+                <th>Qty Diterima / Diorder</th>
+                <th>Status (Front Office)</th>
+                <th>Catatan Verifikasi</th>
+                {user?.role === "front_office" && <th>Aksi Verifikasi</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {receipts.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={user?.role === "front_office" ? 6 : 5}
+                    style={{
+                      textAlign: "center",
+                      padding: "30px",
+                      color: "#64748b",
+                    }}
+                  >
+                    Belum ada riwayat penerimaan barang masuk.
+                  </td>
+                </tr>
+              ) : (
+                receipts.map((r) => (
+                  <tr key={r.id}>
+                    <td>{formatDate(r.created_at)}</td>
+                    <td>
+                      <div style={{ fontWeight: 600 }}>
+                        {r.spare_part_order?.spare_part?.nama_suku_cadang}
+                      </div>
+                      <small style={{ color: "#64748b" }}>
+                        Order by: FO - {r.spare_part_order?.user?.nama_user}
+                      </small>
+                    </td>
+                    <td>
+                      <span style={{ fontWeight: 700, color: "#047857" }}>
+                        {r.jumlah_diterima} Pcs Masuk
+                      </span>
+                      <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
+                        (Tagihan Asli: {r.spare_part_order?.jumlah} Pcs)
+                      </div>
+                    </td>
+                    <td>{statusBadge(r.status_verifikasi)}</td>
+                    <td
+                      style={{
+                        maxWidth: "200px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {r.catatan || "-"}
+                    </td>
+                    {user?.role === "front_office" && (
+                      <td>
+                        {r.status_verifikasi === "menunggu" ? (
+                          <div className={styles.actionGroup}>
+                            <button
+                              className={styles.btnApprove}
+                              onClick={() => handleVerification(r.id, true)}
+                            >
+                              Verifikasi & Simpan
+                            </button>
+                            <button
+                              className={styles.btnReject}
+                              onClick={() => handleVerification(r.id, false)}
+                            >
+                              Tolak
+                            </button>
+                          </div>
+                        ) : (
+                          <div
+                            style={{ fontSize: "0.85rem", color: "#64748b" }}
+                          >
+                            {formatDate(r.tanggal_verifikasi!)}
+                          </div>
+                        )}
+                      </td>
+                    )}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* MODAL KOPERASI CREATE RECEIPT */}
+      {isFormOpen && user?.role === "koperasi" && (
+        <div className={styles.overlay}>
+          <div className={styles.modal}>
+            <h2 className={styles.modalTitle}>Catat Penerimaan Surat DO</h2>
+            <form onSubmit={handleCreateReceipt}>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>
+                  Pilih Nomor & Detail Order (Yang Disetujui) *
+                </label>
+                <select
+                  className={styles.formInput}
+                  value={formData.spare_part_order_id}
+                  onChange={(e) => {
+                    // pre-fill the jumlah
+                    const targetOrder = approvedOrders.find(
+                      (o) => o.id.toString() === e.target.value,
+                    );
+                    setFormData({
+                      ...formData,
+                      spare_part_order_id: e.target.value,
+                      jumlah_diterima: targetOrder
+                        ? targetOrder.jumlah.toString()
+                        : "1",
+                    });
+                  }}
+                >
+                  <option value="">-- Order Siap Masuk Gudang --</option>
+                  {approvedOrders.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      [TGL: {formatDate(o.created_at)}]{" "}
+                      {o.spare_part?.nama_suku_cadang} - Tagihan {o.jumlah} Pcs
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>
+                  Kuantitas Fisik Diterima (Qty) *
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  className={styles.formInput}
+                  value={formData.jumlah_diterima}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      jumlah_diterima: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Catatan (Opsional)</label>
+                <textarea
+                  className={styles.formInput}
+                  rows={2}
+                  placeholder="Kondisi barang saat turun..."
+                  value={formData.catatan}
+                  onChange={(e) =>
+                    setFormData({ ...formData, catatan: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className={styles.formActions}>
+                <button
+                  type="button"
+                  className={styles.btnCancel}
+                  onClick={() => setIsFormOpen(false)}
+                >
+                  Batal
+                </button>
+                <button type="submit" className={styles.btnPrimary}>
+                  Tandai Siap Verifikasi
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ReceiptList;

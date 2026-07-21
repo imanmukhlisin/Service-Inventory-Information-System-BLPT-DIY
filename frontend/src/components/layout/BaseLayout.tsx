@@ -44,6 +44,11 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
       });
       menu.push({ path: "stocks", icon: Package, label: "Informasi Stok" });
       menu.push({ path: "orders", icon: FileText, label: "Order ke Koperasi" });
+      menu.push({
+        path: "receipts",
+        icon: Package,
+        label: "Penerimaan Barang",
+      });
     } else if (role === "koperasi") {
       menu.push({ path: "orders", icon: FileText, label: "Pesanan Masuk" });
       menu.push({

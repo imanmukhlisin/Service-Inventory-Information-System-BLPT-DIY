@@ -13,6 +13,7 @@ import SparePartList from "../features/spare-parts/SparePartList";
 // FO & KOPERASI
 import TransactionList from "../features/transactions/TransactionList";
 import OrderList from "../features/orders/OrderList";
+import ReceiptList from "../features/orders/ReceiptList";
 
 // Simple Unauthorized template
 const Unauthorized = () => (
@@ -84,6 +85,7 @@ export const router = createBrowserRouter([
           { path: "dashboard", element: <div>FO Dashboard</div> },
           { path: "transactions", element: <TransactionList /> },
           { path: "orders", element: <OrderList /> },
+          { path: "receipts", element: <ReceiptList /> },
         ],
       },
     ],
@@ -97,6 +99,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "dashboard", element: <div>Koperasi Dashboard</div> },
           { path: "orders", element: <OrderList /> },
+          { path: "receipts", element: <ReceiptList /> },
         ],
       },
     ],
