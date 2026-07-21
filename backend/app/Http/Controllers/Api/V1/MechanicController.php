@@ -28,7 +28,13 @@ class MechanicController extends Controller
     {
         $validated = $request->validate([
             'nama_mekanik' => 'required|string|max:150',
+            'status' => 'sometimes|string|in:active,inactive',
         ]);
+
+        // Auto-generate mechanic_code
+        $lastId = Mechanic::max('id') ?? 0;
+        $validated['mechanic_code'] = 'MK-' . str_pad($lastId + 1, 3, '0', STR_PAD_LEFT);
+        $validated['status'] = $validated['status'] ?? 'active';
 
         $mechanic = Mechanic::create($validated);
 
@@ -52,6 +58,7 @@ class MechanicController extends Controller
     {
         $validated = $request->validate([
             'nama_mekanik' => 'required|string|max:150',
+            'status' => 'sometimes|string|in:active,inactive',
         ]);
 
         $mechanic->update($validated);

@@ -16,7 +16,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::paginate(10);
+        $users = User::with('login')->paginate(10);
 
         return response()->json([
             'success' => true,
@@ -59,7 +59,7 @@ class UserController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'User berhasil dibuat',
-                'data' => $user->load('loginAccount'),
+                'data' => $user->load('login'),
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -76,7 +76,7 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data berhasil diambil',
-            'data' => $user->load('loginAccount'),
+            'data' => $user->load('login'),
         ]);
     }
 
@@ -114,7 +114,7 @@ class UserController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'User berhasil diperbarui',
-                'data' => $user->load('loginAccount'),
+                'data' => $user->load('login'),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

@@ -123,7 +123,14 @@ const SparePartList: React.FC = () => {
         return;
       }
 
-      const payload = { ...formData };
+      const payload: any = { ...formData };
+      // Backend expects 'stok_awal' on creation, not 'stok_sekarang'
+      if (!editPartId) {
+        payload.stok_awal = payload.stok_sekarang;
+      }
+      delete payload.stok_sekarang;
+      delete payload.satuan; // not a DB field
+      delete payload.status; // computed from stock levels
 
       if (editPartId) {
         await apiClient.put(`/spare-parts/${editPartId}`, payload);
