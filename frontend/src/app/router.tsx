@@ -70,7 +70,6 @@ export const router = createBrowserRouter([
           { path: "users", element: <UserList /> },
           { path: "mechanics", element: <MechanicList /> },
           { path: "spare-parts", element: <SparePartList /> },
-          { path: "transactions", element: <TransactionList /> },
         ],
       },
     ],
