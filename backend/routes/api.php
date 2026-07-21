@@ -25,6 +25,22 @@ $apiRoutes = function () {
         ]);
     });
 
+    // TEMPORARY: Run migrations on production DB
+    Route::get('/run-migrate', function () {
+        try {
+            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            return response()->json([
+                'success' => true,
+                'output' => \Illuminate\Support\Facades\Artisan::output(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    });
+
     Route::post('/authorizer/login', [AuthorizerController::class, 'login']);
 
     Route::middleware('auth')->group(function () {
