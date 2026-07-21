@@ -14,6 +14,7 @@ import SparePartList from "../features/spare-parts/SparePartList";
 import TransactionList from "../features/transactions/TransactionList";
 import OrderList from "../features/orders/OrderList";
 import ReceiptList from "../features/orders/ReceiptList";
+import ReportsDashboard from "../features/reports/ReportsDashboard";
 
 // Simple Unauthorized template
 const Unauthorized = () => (
@@ -110,9 +111,7 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <BaseLayout title="Dashboard Laporan UPJ" />,
-        children: [
-          { path: "dashboard", element: <div>Kepala UPJ Dashboard</div> },
-        ],
+        children: [{ path: "dashboard", element: <ReportsDashboard /> }],
       },
     ],
   },
