@@ -10,8 +10,9 @@ import AdminDashboard from "../features/dashboards/AdminDashboard";
 import UserList from "../features/users/UserList";
 import MechanicList from "../features/mechanics/MechanicList";
 import SparePartList from "../features/spare-parts/SparePartList";
-// FO
+// FO & KOPERASI
 import TransactionList from "../features/transactions/TransactionList";
+import OrderList from "../features/orders/OrderList";
 
 // Simple Unauthorized template
 const Unauthorized = () => (
@@ -83,6 +84,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "dashboard", element: <div>FO Dashboard</div> },
           { path: "transactions", element: <TransactionList /> },
+          { path: "orders", element: <OrderList /> },
         ],
       },
     ],
@@ -95,6 +97,7 @@ export const router = createBrowserRouter([
         element: <BaseLayout title="Logistik Koperasi" />,
         children: [
           { path: "dashboard", element: <div>Koperasi Dashboard</div> },
+          { path: "orders", element: <OrderList /> },
         ],
       },
     ],
