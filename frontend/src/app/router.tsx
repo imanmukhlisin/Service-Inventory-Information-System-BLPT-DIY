@@ -11,7 +11,7 @@ import UserList from "../features/users/UserList";
 import MechanicList from "../features/mechanics/MechanicList";
 import SparePartList from "../features/spare-parts/SparePartList";
 // FO
-// import KasirPage from '../features/transactions/KasirPage';
+import TransactionList from "../features/transactions/TransactionList";
 
 // Simple Unauthorized template
 const Unauthorized = () => (
@@ -69,6 +69,7 @@ export const router = createBrowserRouter([
           { path: "users", element: <UserList /> },
           { path: "mechanics", element: <MechanicList /> },
           { path: "spare-parts", element: <SparePartList /> },
+          { path: "transactions", element: <TransactionList /> },
         ],
       },
     ],
@@ -79,7 +80,10 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <BaseLayout title="Front Office" />,
-        children: [{ path: "dashboard", element: <div>FO Dashboard</div> }],
+        children: [
+          { path: "dashboard", element: <div>FO Dashboard</div> },
+          { path: "transactions", element: <TransactionList /> },
+        ],
       },
     ],
   },

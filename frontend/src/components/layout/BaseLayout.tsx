@@ -36,6 +36,11 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
         icon: Package,
         label: "Master Suku Cadang",
       });
+      menu.push({
+        path: "transactions",
+        icon: ShoppingCart,
+        label: "Transaksi Kasir (Debug)",
+      });
     } else if (role === "front_office") {
       menu.push({
         path: "transactions",
