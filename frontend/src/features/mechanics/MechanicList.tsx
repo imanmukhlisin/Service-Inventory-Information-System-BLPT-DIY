@@ -18,6 +18,10 @@ const MechanicList: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editMechanicId, setEditMechanicId] = useState<number | null>(null);
 
+  // Filter State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+
   // Form State
   const [formData, setFormData] = useState({
     mechanic_code: "",
@@ -167,6 +171,14 @@ const MechanicList: React.FC = () => {
     }
   };
 
+  const filteredMechanics = mechanics.filter((m) => {
+    const matchesSearch =
+      m.nama_mekanik.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.mechanic_code.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus ? m.status === filterStatus : true;
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
@@ -184,11 +196,17 @@ const MechanicList: React.FC = () => {
               type="text"
               placeholder="Nama atau kode mekanik"
               className={styles.searchInput}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Status</label>
-            <select className={styles.selectInput}>
+            <select
+              className={styles.selectInput}
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
               <option value="">Semua status</option>
               <option value="active">Aktif</option>
               <option value="inactive">Tidak Aktif</option>
@@ -228,11 +246,11 @@ const MechanicList: React.FC = () => {
                     colSpan={4}
                     style={{ textAlign: "center", padding: "24px" }}
                   >
-                    Belum ada data.
+                    Belum ada data atau kata kunci tidak ditemukan.
                   </td>
                 </tr>
               ) : (
-                mechanics.map((m) => (
+                filteredMechanics.map((m) => (
                   <tr key={m.id}>
                     <td>{m.mechanic_code}</td>
                     <td style={{ fontWeight: 500, color: "#0f2c4a" }}>

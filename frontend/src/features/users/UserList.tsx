@@ -21,6 +21,10 @@ const UserList: React.FC = () => {
   const [editUserId, setEditUserId] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
+  // Filter State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterRole, setFilterRole] = useState("");
+
   // Form State
   const [formData, setFormData] = useState({
     nama_user: "",
@@ -192,6 +196,16 @@ const UserList: React.FC = () => {
     return roles[role] || role;
   };
 
+  const filteredUsers = users.filter((u) => {
+    const matchesSearch =
+      u.nama_user.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (u.login?.username || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+    const matchesRole = filterRole ? u.role === filterRole : true;
+    return matchesSearch && matchesRole;
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
@@ -209,11 +223,17 @@ const UserList: React.FC = () => {
               type="text"
               placeholder="Nama atau username"
               className={styles.searchInput}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Peran</label>
-            <select className={styles.selectInput}>
+            <select
+              className={styles.selectInput}
+              value={filterRole}
+              onChange={(e) => setFilterRole(e.target.value)}
+            >
               <option value="">Semua peran</option>
               <option value="admin">Admin</option>
               <option value="front_office">Front Office</option>
@@ -256,11 +276,11 @@ const UserList: React.FC = () => {
                     colSpan={5}
                     style={{ textAlign: "center", padding: "24px" }}
                   >
-                    Belum ada data.
+                    Belum ada data atau kata kunci tidak ditemukan.
                   </td>
                 </tr>
               ) : (
-                users.map((u) => (
+                filteredUsers.map((u) => (
                   <tr key={u.id}>
                     <td style={{ fontWeight: 500, color: "#0f2c4a" }}>
                       {u.nama_user}

@@ -23,6 +23,11 @@ const SparePartList: React.FC = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editPartId, setEditPartId] = useState<number | null>(null);
 
+  // Filter State
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
+  const [filterStockStatus, setFilterStockStatus] = useState("");
+
   // Form State
   const [formData, setFormData] = useState({
     kode_suku_cadang: "",
@@ -212,6 +217,23 @@ const SparePartList: React.FC = () => {
     }).format(val);
   };
 
+  const filteredParts = parts.filter((p) => {
+    const matchesSearch =
+      p.nama_suku_cadang.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.kode_suku_cadang.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = filterCategory
+      ? p.kategori.toLowerCase() === filterCategory.toLowerCase()
+      : true;
+
+    const pStockStatus =
+      (p.stok_sekarang || 0) >= (p.stok_minimum || 0) ? "aman" : "minimum";
+    const matchesStock = filterStockStatus
+      ? pStockStatus === filterStockStatus
+      : true;
+
+    return matchesSearch && matchesCategory && matchesStock;
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
@@ -229,11 +251,17 @@ const SparePartList: React.FC = () => {
               type="text"
               placeholder="Kode atau nama suku cadang"
               className={styles.searchInput}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Kategori</label>
-            <select className={styles.selectInput}>
+            <select
+              className={styles.selectInput}
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+            >
               <option value="">Semua kategori</option>
               <option value="pengereman">Pengereman</option>
               <option value="transmisi">Transmisi</option>
@@ -242,7 +270,11 @@ const SparePartList: React.FC = () => {
           </div>
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Status Stok</label>
-            <select className={styles.selectInput}>
+            <select
+              className={styles.selectInput}
+              value={filterStockStatus}
+              onChange={(e) => setFilterStockStatus(e.target.value)}
+            >
               <option value="">Semua status</option>
               <option value="aman">Aman</option>
               <option value="minimum">Minimum</option>
@@ -286,11 +318,11 @@ const SparePartList: React.FC = () => {
                     colSpan={8}
                     style={{ textAlign: "center", padding: "24px" }}
                   >
-                    Tidak ada data master suku cadang.
+                    Tidak ada data master suku cadang yang cocok dengan filter.
                   </td>
                 </tr>
               ) : (
-                parts.map((p) => (
+                filteredParts.map((p) => (
                   <tr key={p.id}>
                     <td>{p.kode_suku_cadang}</td>
                     <td style={{ fontWeight: 500, color: "#0f2c4a" }}>
