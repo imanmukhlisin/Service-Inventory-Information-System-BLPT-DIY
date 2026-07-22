@@ -21,7 +21,7 @@ interface JasaItem {
   nama_mekanik: string;
   nama_jasa: string;
   biaya_jasa: number;
-  qty: number;
+  keterangan: string;
   subtotal: number;
 }
 
@@ -43,11 +43,14 @@ const TransactionList: React.FC = () => {
   const [jasaList, setJasaList] = useState<JasaItem[]>([]);
   const [partList, setPartList] = useState<PartItem[]>([]);
 
+  // Nota State
+  const [nomorNota, setNomorNota] = useState("");
+
   // Jasa Form
   const [jasaForm, setJasaForm] = useState({
     nama_jasa: "",
     id_mekanik: "",
-    qty: "1",
+    keterangan: "",
     biaya_jasa: "",
   });
 
@@ -61,7 +64,15 @@ const TransactionList: React.FC = () => {
 
   useEffect(() => {
     fetchDependancies();
+    generateNota();
   }, []);
+
+  const generateNota = () => {
+    const d = new Date();
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    const dStr = `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
+    setNomorNota(`NT01-${dStr}`);
+  };
 
   const fetchDependancies = async () => {
     try {
@@ -106,29 +117,28 @@ const TransactionList: React.FC = () => {
   };
 
   const addJasa = () => {
-    if (
-      !jasaForm.nama_jasa ||
-      !jasaForm.id_mekanik ||
-      !jasaForm.qty ||
-      !jasaForm.biaya_jasa
-    ) {
-      Swal.fire({ icon: "warning", text: "Lengkapi data jasa servis!" });
+    if (!jasaForm.nama_jasa || !jasaForm.id_mekanik || !jasaForm.biaya_jasa) {
+      Swal.fire({ icon: "warning", text: "Lengkapi data jasa servis utama!" });
       return;
     }
     const mech = mechanics.find((m) => m.id === parseInt(jasaForm.id_mekanik));
     const price = parseFloat(jasaForm.biaya_jasa);
-    const q = parseInt(jasaForm.qty);
 
     const newItem: JasaItem = {
       id_mekanik: parseInt(jasaForm.id_mekanik),
       nama_mekanik: mech?.nama_mekanik || "",
       nama_jasa: jasaForm.nama_jasa,
       biaya_jasa: price,
-      qty: q,
-      subtotal: price * q,
+      keterangan: jasaForm.keterangan || "-",
+      subtotal: price,
     };
     setJasaList([...jasaList, newItem]);
-    setJasaForm({ id_mekanik: "", nama_jasa: "", qty: "1", biaya_jasa: "" });
+    setJasaForm({
+      id_mekanik: "",
+      nama_jasa: "",
+      keterangan: "",
+      biaya_jasa: "",
+    });
   };
 
   const addPart = () => {
@@ -199,7 +209,7 @@ const TransactionList: React.FC = () => {
         id_mekanik: c.id_mekanik,
         nama_jasa: c.nama_jasa,
         biaya_jasa: c.biaya_jasa,
-        keterangan_jasa: "", // No description in mockup
+        keterangan_jasa: c.keterangan,
       })),
       spare_parts: partList.map((c) => ({
         id_master_suku_cadang: c.id_master_suku_cadang,
@@ -246,7 +256,11 @@ const TransactionList: React.FC = () => {
           <div className={styles.formGridInfo}>
             <div className={styles.formGroup}>
               <label>Nomor Nota</label>
-              <input type="text" disabled value="NT-(otomatis)" />
+              <input
+                type="text"
+                value={nomorNota}
+                onChange={(e) => setNomorNota(e.target.value)}
+              />
             </div>
             <div className={styles.formGroup}>
               <label>Tanggal</label>
@@ -295,13 +309,13 @@ const TransactionList: React.FC = () => {
               </select>
             </div>
             <div className={styles.formGroup}>
-              <label>Jumlah *</label>
+              <label>Keterangan</label>
               <input
-                type="number"
-                min="1"
-                value={jasaForm.qty}
+                type="text"
+                placeholder="Catatan..."
+                value={jasaForm.keterangan}
                 onChange={(e) =>
-                  setJasaForm({ ...jasaForm, qty: e.target.value })
+                  setJasaForm({ ...jasaForm, keterangan: e.target.value })
                 }
               />
             </div>
@@ -330,7 +344,7 @@ const TransactionList: React.FC = () => {
                 <tr>
                   <th>Jasa</th>
                   <th>Mekanik</th>
-                  <th>Qty</th>
+                  <th>Keterangan</th>
                   <th>Harga</th>
                   <th>Subtotal</th>
                 </tr>
@@ -340,7 +354,7 @@ const TransactionList: React.FC = () => {
                   <tr key={idx}>
                     <td>{item.nama_jasa}</td>
                     <td>{item.nama_mekanik}</td>
-                    <td>{item.qty}</td>
+                    <td>{item.keterangan}</td>
                     <td>{formatIDR(item.biaya_jasa)}</td>
                     <td>{formatIDR(item.subtotal)}</td>
                   </tr>
