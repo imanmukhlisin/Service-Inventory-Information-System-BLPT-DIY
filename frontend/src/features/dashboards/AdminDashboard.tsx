@@ -53,49 +53,17 @@ const AdminDashboard: React.FC = () => {
           spare_parts_total: stats.spare_parts_total || 0,
         });
 
-        // Fetch transactions and group by HOUR for today's daily activity
-        const txRes = await apiClient.get("/transactions");
-        const txs = txRes.data.data;
-
-        const today = new Date();
-        const todayStr = today.toISOString().slice(0, 10); // "YYYY-MM-DD"
-
-        // Count transactions per hour
-        const hourCounts: Record<string, number> = {};
-        hourLabels.forEach((h) => (hourCounts[h] = 0));
-
-        txs.forEach((tx: any) => {
-          const txDate = tx.tanggal?.slice(0, 10) || "";
-          if (txDate === todayStr && tx.created_at) {
-            const hour = new Date(tx.created_at).getHours();
-            const label = `${String(hour).padStart(2, "0")}:00`;
-            if (hourCounts[label] !== undefined) {
-              hourCounts[label] += 1;
-            }
+        // 2. Fetch login activity for chart
+        try {
+          const activityRes = await apiClient.get(
+            "/dashboard/admin/login-activity",
+          );
+          if (activityRes.data.success && activityRes.data.data) {
+            setChartData(activityRes.data.data);
           }
-        });
-
-        // If no transactions today, show ALL transactions distributed across hours to keep chart alive
-        const totalToday = Object.values(hourCounts).reduce((a, b) => a + b, 0);
-        if (totalToday === 0) {
-          // Fallback: distribute all transactions across hours for visual demo
-          txs.forEach((tx: any) => {
-            if (tx.created_at) {
-              const hour = new Date(tx.created_at).getHours();
-              const label = `${String(hour).padStart(2, "0")}:00`;
-              if (hourCounts[label] !== undefined) {
-                hourCounts[label] += 1;
-              }
-            }
-          });
+        } catch {
+          // Chart will stay at initial zeros if endpoint not ready
         }
-
-        const newChartData = hourLabels.map((h) => ({
-          name: h,
-          aktivitas: hourCounts[h],
-        }));
-
-        setChartData(newChartData);
       } catch (error) {
         console.error("Failed to load dashboard metrics", error);
       }
@@ -200,7 +168,7 @@ const AdminDashboard: React.FC = () => {
         {/* Interactive Chart Panel */}
         <div className={styles.chartPanel}>
           <div className={styles.panelHeader}>
-            <h2 className={styles.panelTitle}>Aktivitas Sistem Harian</h2>
+            <h2 className={styles.panelTitle}>Aktivitas Login Harian</h2>
           </div>
           <div className={styles.panelContent} style={{ height: "400px" }}>
             <ResponsiveContainer width="100%" height={350}>

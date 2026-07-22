@@ -8,7 +8,9 @@ use App\Models\Mechanic;
 use App\Models\SparePart;
 use App\Models\SparePartStock;
 use App\Models\Transaction;
+use App\Models\LoginLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -66,6 +68,56 @@ class DashboardController extends Controller
                 'message' => 'Gagal mengambil statistik dashboard',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Get hourly login activity for the admin dashboard chart.
+     */
+    public function loginActivity(Request $request)
+    {
+        try {
+            $hours = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+            $result = [];
+
+            // Try to get today's login activity
+            $todayLogs = LoginLog::whereDate('logged_in_at', today())->get();
+
+            // If no activity today, show all historical data
+            $logs = $todayLogs->count() > 0 ? $todayLogs : LoginLog::all();
+
+            $hourCounts = array_fill_keys($hours, 0);
+
+            foreach ($logs as $log) {
+                $hour = $log->logged_in_at->format('H') . ':00';
+                if (isset($hourCounts[$hour])) {
+                    $hourCounts[$hour]++;
+                }
+            }
+
+            foreach ($hours as $h) {
+                $result[] = [
+                    'name' => $h,
+                    'aktivitas' => $hourCounts[$h],
+                ];
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $result,
+                'period' => $todayLogs->count() > 0 ? 'today' : 'all_time',
+                'total_logins' => $logs->count(),
+            ]);
+        } catch (\Exception $e) {
+            // If table doesn't exist yet, return empty data gracefully
+            $hours = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+            $result = array_map(fn($h) => ['name' => $h, 'aktivitas' => 0], $hours);
+            return response()->json([
+                'success' => true,
+                'data' => $result,
+                'period' => 'empty',
+                'total_logins' => 0,
+            ]);
         }
     }
 }

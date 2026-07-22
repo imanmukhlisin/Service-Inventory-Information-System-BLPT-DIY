@@ -50,6 +50,7 @@ $apiRoutes = function () {
         // Admin Specific Routes
         Route::middleware('role:admin')->group(function () {
             Route::get('/dashboard/admin/stats', [DashboardController::class, 'adminStats']);
+            Route::get('/dashboard/admin/login-activity', [DashboardController::class, 'loginActivity']);
 
             Route::apiResource('/users', UserController::class);
             Route::apiResource('/login-accounts', LoginAccountController::class);
