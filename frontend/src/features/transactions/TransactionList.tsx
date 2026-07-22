@@ -4,6 +4,14 @@ import { useAuth } from "../../app/AuthContext";
 import Swal from "sweetalert2";
 import styles from "./TransactionList.module.css";
 
+interface UserApi {
+  id: number;
+  nama_user: string;
+  login: {
+    role: string;
+  };
+}
+
 interface Mechanic {
   id: number;
   nama_mekanik: string;
@@ -36,6 +44,7 @@ interface PartItem {
 
 const TransactionList: React.FC = () => {
   const { user } = useAuth();
+  const [users, setUsers] = useState<UserApi[]>([]);
   const [mechanics, setMechanics] = useState<Mechanic[]>([]);
   const [spareParts, setSpareParts] = useState<SparePart[]>([]);
 
@@ -45,6 +54,8 @@ const TransactionList: React.FC = () => {
 
   // Nota State
   const [nomorNota, setNomorNota] = useState("");
+  const [tanggal, setTanggal] = useState("");
+  const [selectedFoUser, setSelectedFoUser] = useState("");
 
   // Jasa Form
   const [jasaForm, setJasaForm] = useState({
@@ -64,22 +75,40 @@ const TransactionList: React.FC = () => {
 
   useEffect(() => {
     fetchDependancies();
-    generateNota();
-  }, []);
 
-  const generateNota = () => {
-    const d = new Date();
-    const pad = (n: number) => n.toString().padStart(2, "0");
-    const dStr = `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
-    setNomorNota(`NT01-${dStr}`);
-  };
+    // Set default values including initial date
+    const today = new Date().toISOString().split("T")[0];
+    setTanggal(today);
+
+    if (user) {
+      setSelectedFoUser(user.id.toString());
+    }
+  }, [user]);
+
+  // When date changes, regenerate the nota
+  useEffect(() => {
+    if (tanggal) {
+      const d = new Date(tanggal);
+      const pad = (n: number) => n.toString().padStart(2, "0");
+      const dStr = `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
+      setNomorNota(`NT01-${dStr}`);
+    }
+  }, [tanggal]);
 
   const fetchDependancies = async () => {
     try {
-      const [resMech, resParts] = await Promise.all([
+      const [resUsers, resMech, resParts] = await Promise.all([
+        apiClient.get("/users"),
         apiClient.get("/mechanics"),
         apiClient.get("/spare-parts"),
       ]);
+
+      const foUsers = resUsers.data.data.filter(
+        (u: any) =>
+          u.login?.role === "front_office" || u.login?.role === "admin",
+      );
+      setUsers(foUsers);
+
       setMechanics(resMech.data.data.filter((m: any) => m.status === "active"));
 
       const mappedParts = resParts.data.data.map((p: any) => ({
@@ -189,15 +218,6 @@ const TransactionList: React.FC = () => {
       maximumFractionDigits: 0,
     }).format(val);
 
-  const getLocalDate = () => {
-    const today = new Date();
-    return today.toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
   const handleCheckout = async () => {
     if (jasaList.length === 0 && partList.length === 0) {
       Swal.fire({ icon: "warning", text: "Nota masih kosong!" });
@@ -205,6 +225,9 @@ const TransactionList: React.FC = () => {
     }
 
     const payload = {
+      tanggal: tanggal,
+      user_id: parseInt(selectedFoUser),
+      no_nota: nomorNota,
       services: jasaList.map((c) => ({
         id_mekanik: c.id_mekanik,
         nama_jasa: c.nama_jasa,
@@ -264,15 +287,25 @@ const TransactionList: React.FC = () => {
             </div>
             <div className={styles.formGroup}>
               <label>Tanggal</label>
-              <input type="text" disabled value={getLocalDate()} />
+              <input
+                type="date"
+                value={tanggal}
+                onChange={(e) => setTanggal(e.target.value)}
+              />
             </div>
             <div className={styles.formGroup}>
               <label>Petugas</label>
-              <input
-                type="text"
-                disabled
-                value={user?.nama_user || "Front Office"}
-              />
+              <select
+                value={selectedFoUser}
+                onChange={(e) => setSelectedFoUser(e.target.value)}
+              >
+                <option value="">Pilih Petugas (FO)</option>
+                {users.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.nama_user} ({u.login?.role})
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

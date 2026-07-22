@@ -48,6 +48,7 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'user_id' => 'sometimes|exists:users,id',
             'tanggal' => 'required|date',
             'no_nota' => 'required|string|unique:transactions,no_nota',
             'services' => 'sometimes|array',
@@ -70,13 +71,13 @@ class TransactionController extends Controller
         try {
             // Create Transaction Header
             $transaction = Transaction::create([
-                'user_id' => $request->user()->user->id, // Get original underlying User ID
+                'user_id' => $validated['user_id'] ?? $request->user()->user->id, // Use provided user_id or fallback to current
                 'tanggal' => $validated['tanggal'],
                 'no_nota' => $validated['no_nota'],
             ]);
 
             // Map and Create Services
-            if (! empty($validated['services'])) {
+            if (!empty($validated['services'])) {
                 foreach ($validated['services'] as $svc) {
                     $transaction->transactionServices()->create([
                         'mechanic_id' => $svc['mechanic_id'],
@@ -88,15 +89,15 @@ class TransactionController extends Controller
             }
 
             // Map and Apply Spare Part deductions
-            if (! empty($validated['spare_parts'])) {
+            if (!empty($validated['spare_parts'])) {
                 foreach ($validated['spare_parts'] as $sp_req) {
                     $stock = SparePartStock::where('spare_part_id', $sp_req['spare_part_id'])
                         ->lockForUpdate()
                         ->first();
 
-                    if (! $stock || $stock->stok_sekarang < $sp_req['jumlah']) {
+                    if (!$stock || $stock->stok_sekarang < $sp_req['jumlah']) {
                         throw ValidationException::withMessages([
-                            'spare_parts' => "Stok untuk Suku Cadang ID {$sp_req['spare_part_id']} tidak mencukupi (Tersedia: ".($stock->stok_sekarang ?? 0).').',
+                            'spare_parts' => "Stok untuk Suku Cadang ID {$sp_req['spare_part_id']} tidak mencukupi (Tersedia: " . ($stock->stok_sekarang ?? 0) . ').',
                         ]);
                     }
 

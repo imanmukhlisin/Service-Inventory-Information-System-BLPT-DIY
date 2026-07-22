@@ -52,7 +52,7 @@ $apiRoutes = function () {
             Route::get('/dashboard/admin/stats', [DashboardController::class, 'adminStats']);
             Route::get('/dashboard/admin/login-activity', [DashboardController::class, 'loginActivity']);
 
-            Route::apiResource('/users', UserController::class);
+            Route::apiResource('/users', UserController::class)->except(['index']);
             Route::apiResource('/login-accounts', LoginAccountController::class);
 
             Route::post('/mechanics', [MechanicController::class, 'store']);
@@ -68,6 +68,7 @@ $apiRoutes = function () {
 
         // Shared Mechanics Route
         Route::middleware('role:admin,front_office')->group(function () {
+            Route::get('/users', [UserController::class, 'index']);
             Route::get('/mechanics', [MechanicController::class, 'index']);
             Route::get('/mechanics/{mechanic}', [MechanicController::class, 'show']);
         });
