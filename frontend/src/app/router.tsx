@@ -15,6 +15,9 @@ import TransactionList from "../features/transactions/TransactionList";
 import OrderList from "../features/orders/OrderList";
 import ReceiptList from "../features/orders/ReceiptList";
 import ReportsDashboard from "../features/reports/ReportsDashboard";
+import FODashboard from "../features/dashboard/FODashboard";
+import KoperasiDashboard from "../features/dashboard/KoperasiDashboard";
+import UpjDashboard from "../features/dashboard/UpjDashboard";
 
 // Simple Unauthorized template
 const Unauthorized = () => (
@@ -83,7 +86,7 @@ export const router = createBrowserRouter([
       {
         element: <BaseLayout title="Front Office" />,
         children: [
-          { path: "dashboard", element: <div>FO Dashboard</div> },
+          { path: "dashboard", element: <FODashboard /> },
           { path: "transactions", element: <TransactionList /> },
           { path: "orders", element: <OrderList /> },
           { path: "receipts", element: <ReceiptList /> },
@@ -98,7 +101,7 @@ export const router = createBrowserRouter([
       {
         element: <BaseLayout title="Logistik Koperasi" />,
         children: [
-          { path: "dashboard", element: <div>Koperasi Dashboard</div> },
+          { path: "dashboard", element: <KoperasiDashboard /> },
           { path: "orders", element: <OrderList /> },
           { path: "receipts", element: <ReceiptList /> },
         ],
@@ -111,7 +114,10 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <BaseLayout title="Dashboard Laporan UPJ" />,
-        children: [{ path: "dashboard", element: <ReportsDashboard /> }],
+        children: [
+          { path: "dashboard", element: <UpjDashboard /> },
+          { path: "reports", element: <ReportsDashboard /> },
+        ],
       },
     ],
   },

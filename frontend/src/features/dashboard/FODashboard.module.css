@@ -1,0 +1,205 @@
+/* FODashboard.module.css */
+.container {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  margin-bottom: 24px;
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.pageSubtitle {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.metricCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.metricHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.iconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.iconBlue {
+  background: #3b82f6;
+}
+.iconGreen {
+  background: #10b981;
+}
+.iconIndigo {
+  background: #6366f1;
+}
+.iconOrange {
+  background: #f97316;
+}
+
+.metricLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.metricValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.metricSubtext {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+/* Split content area */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.cardTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.tableGroup {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableGroup th {
+  text-align: left;
+  font-size: 0.85rem;
+  color: #64748b;
+  padding: 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tableGroup td {
+  padding: 12px 10px;
+  font-size: 0.9rem;
+  color: #1e293b;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tableGroup tr:last-child td {
+  border-bottom: none;
+}
+
+/* Stock Need Attention List */
+.stockList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stockItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.stockItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.stockDetails h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.stockDetails p {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: #ef4444; /* red */
+  font-weight: 500;
+}
+
+.badgeWarning {
+  background: #ffedd5;
+  color: #c2410c;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-weight: 600;
+}
+
+.btnCta {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: #3b82f6;
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 24px;
+  transition: background 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btnCta:hover {
+  background: #2563eb;
+}

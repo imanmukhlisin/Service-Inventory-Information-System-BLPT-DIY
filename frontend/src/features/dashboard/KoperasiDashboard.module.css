@@ -1,0 +1,162 @@
+/* KoperasiDashboard.module.css */
+/* Reusing core generic styles from FODashboard to maintain consistency */
+.container {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.pageHeader {
+  margin-bottom: 24px;
+}
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+.pageSubtitle {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.metricCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.metricHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.iconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.iconOrange {
+  background: #d97706;
+}
+.iconLightBlue {
+  background: #38bdf8;
+}
+.iconGreen {
+  background: #16a34a;
+}
+.iconDarkBlue {
+  background: #1e40af;
+}
+
+.metricLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+.metricValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+.metricSubtext {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+}
+
+.cardTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.tableGroup {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tableGroup th {
+  text-align: left;
+  font-size: 0.85rem;
+  color: #64748b;
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.tableGroup td {
+  padding: 16px 12px;
+  font-size: 0.9rem;
+  color: #1e293b;
+  border-bottom: 1px solid #f1f5f9;
+}
+.tableGroup tr:last-child td {
+  border-bottom: none;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badgeBaru {
+  background: #ffedd5;
+  color: #c2410c;
+}
+.badgeDiproses {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.badgeSelesai {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.btnOutline {
+  display: block;
+  width: max-content;
+  margin: 0 0 0 auto;
+  padding: 10px 24px;
+  border: 1px solid #3b82f6;
+  color: #3b82f6;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  background: white;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.btnOutline:hover {
+  background: #eff6ff;
+}

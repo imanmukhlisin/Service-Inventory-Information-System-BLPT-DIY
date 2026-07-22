@@ -1,0 +1,205 @@
+/* UpjDashboard.module.css */
+/* Reusing core generic styles */
+.container {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.pageHeader {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+.pageSubtitle {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.btnOutline {
+  padding: 10px 24px;
+  background: #1e40af;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btnOutline:hover {
+  background: #1e3a8a;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.metricCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.metricHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.iconWrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.iconBlue {
+  background: #3b82f6;
+}
+.iconGreen {
+  background: #10b981;
+}
+.iconOrange {
+  background: #f97316;
+}
+.iconIndigo {
+  background: #6366f1;
+}
+
+.metricLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+.metricValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+.metricSubtext {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.cardTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+/* CSS Bar Chart */
+.chartContainer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 250px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  gap: 8px;
+}
+
+.barCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  flex: 1;
+}
+
+.bar {
+  width: 40px;
+  background: #3b82f6;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.5s ease-out;
+}
+
+.barCol:hover .bar {
+  background: #2563eb;
+}
+
+.barLabel {
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Mechanic List */
+.mechanicList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mechanicItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rankBadge {
+  width: 30px;
+  height: 30px;
+  background: #eff6ff;
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.mechanicInfo h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+.mechanicInfo p {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
