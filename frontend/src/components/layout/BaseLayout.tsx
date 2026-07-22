@@ -38,11 +38,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
       });
     } else if (role === "front_office") {
       menu.push({
-        path: "dashboard",
-        icon: FileText,
-        label: "Dashboard",
-      });
-      menu.push({
         path: "transaksi-baru",
         icon: ShoppingCart,
         label: "Transaksi Baru",
@@ -69,11 +64,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
         label: "[Logistik] Penerimaan",
       });
     } else if (role === "koperasi") {
-      menu.push({
-        path: "dashboard",
-        icon: FileText,
-        label: "Dashboard",
-      });
       menu.push({ path: "orders", icon: FileText, label: "Order Suku Cadang" });
       menu.push({
         path: "penerimaan",
@@ -86,11 +76,6 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
         label: "Riwayat Penerimaan",
       });
     } else if (role === "kepala_upj") {
-      menu.push({
-        path: "dashboard",
-        icon: FileText,
-        label: "Dashboard",
-      });
       menu.push({
         path: "laporan-jasa-servis",
         icon: FileText,
