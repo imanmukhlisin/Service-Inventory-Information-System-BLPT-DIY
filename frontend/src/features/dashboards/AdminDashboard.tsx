@@ -18,14 +18,14 @@ interface DashboardMetrics {
 }
 
 // Dummy activity data for the chart visualization
-const weeklyActivityData = [
-  { name: "Senin", aktivitas: 12 },
-  { name: "Selasa", aktivitas: 19 },
-  { name: "Rabu", aktivitas: 15 },
-  { name: "Kamis", aktivitas: 24 },
-  { name: "Jumat", aktivitas: 22 },
-  { name: "Sabtu", aktivitas: 30 },
-  { name: "Minggu", aktivitas: 18 },
+const initialChartData = [
+  { name: "Senin", aktivitas: 0 },
+  { name: "Selasa", aktivitas: 0 },
+  { name: "Rabu", aktivitas: 0 },
+  { name: "Kamis", aktivitas: 0 },
+  { name: "Jumat", aktivitas: 0 },
+  { name: "Sabtu", aktivitas: 0 },
+  { name: "Minggu", aktivitas: 0 },
 ];
 
 const AdminDashboard: React.FC = () => {
@@ -34,6 +34,8 @@ const AdminDashboard: React.FC = () => {
     mechanics_total: 0,
     spare_parts_total: 0,
   });
+
+  const [chartData, setChartData] = useState(initialChartData);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -45,6 +47,47 @@ const AdminDashboard: React.FC = () => {
           mechanics_total: stats.mechanics_total || 0,
           spare_parts_total: stats.spare_parts_total || 0,
         });
+
+        // 2. Fetch standard transactions to group as weekly system activity
+        const txRes = await apiClient.get("/transactions");
+        const txs = txRes.data.data;
+
+        const dayCounts: Record<string, number> = {
+          Senin: 0,
+          Selasa: 0,
+          Rabu: 0,
+          Kamis: 0,
+          Jumat: 0,
+          Sabtu: 0,
+          Minggu: 0,
+        };
+        const dayIndexMap = [
+          "Minggu",
+          "Senin",
+          "Selasa",
+          "Rabu",
+          "Kamis",
+          "Jumat",
+          "Sabtu",
+        ];
+
+        txs.forEach((tx: any) => {
+          const date = new Date(tx.tanggal);
+          const dayName = dayIndexMap[date.getDay()];
+          dayCounts[dayName] = (dayCounts[dayName] || 0) + 1;
+        });
+
+        const newChartData = [
+          { name: "Senin", aktivitas: dayCounts["Senin"] },
+          { name: "Selasa", aktivitas: dayCounts["Selasa"] },
+          { name: "Rabu", aktivitas: dayCounts["Rabu"] },
+          { name: "Kamis", aktivitas: dayCounts["Kamis"] },
+          { name: "Jumat", aktivitas: dayCounts["Jumat"] },
+          { name: "Sabtu", aktivitas: dayCounts["Sabtu"] },
+          { name: "Minggu", aktivitas: dayCounts["Minggu"] },
+        ];
+
+        setChartData(newChartData);
       } catch (error) {
         console.error("Failed to load dashboard metrics", error);
       }
@@ -154,7 +197,7 @@ const AdminDashboard: React.FC = () => {
           <div className={styles.panelContent} style={{ height: "400px" }}>
             <ResponsiveContainer width="100%" height={350}>
               <AreaChart
-                data={weeklyActivityData}
+                data={chartData}
                 margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
               >
                 <defs>
