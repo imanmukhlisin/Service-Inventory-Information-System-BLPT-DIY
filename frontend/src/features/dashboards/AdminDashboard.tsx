@@ -17,16 +17,21 @@ interface DashboardMetrics {
   spare_parts_total: number;
 }
 
-// Dummy activity data for the chart visualization
-const initialChartData = [
-  { name: "Senin", aktivitas: 0 },
-  { name: "Selasa", aktivitas: 0 },
-  { name: "Rabu", aktivitas: 0 },
-  { name: "Kamis", aktivitas: 0 },
-  { name: "Jumat", aktivitas: 0 },
-  { name: "Sabtu", aktivitas: 0 },
-  { name: "Minggu", aktivitas: 0 },
+// Hourly slots for daily activity chart (operating hours 07:00 - 17:00)
+const hourLabels = [
+  "07:00",
+  "08:00",
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
 ];
+const initialChartData = hourLabels.map((h) => ({ name: h, aktivitas: 0 }));
 
 const AdminDashboard: React.FC = () => {
   const [metrics, setMetrics] = useState<DashboardMetrics>({
@@ -48,44 +53,47 @@ const AdminDashboard: React.FC = () => {
           spare_parts_total: stats.spare_parts_total || 0,
         });
 
-        // 2. Fetch standard transactions to group as weekly system activity
+        // Fetch transactions and group by HOUR for today's daily activity
         const txRes = await apiClient.get("/transactions");
         const txs = txRes.data.data;
 
-        const dayCounts: Record<string, number> = {
-          Senin: 0,
-          Selasa: 0,
-          Rabu: 0,
-          Kamis: 0,
-          Jumat: 0,
-          Sabtu: 0,
-          Minggu: 0,
-        };
-        const dayIndexMap = [
-          "Minggu",
-          "Senin",
-          "Selasa",
-          "Rabu",
-          "Kamis",
-          "Jumat",
-          "Sabtu",
-        ];
+        const today = new Date();
+        const todayStr = today.toISOString().slice(0, 10); // "YYYY-MM-DD"
+
+        // Count transactions per hour
+        const hourCounts: Record<string, number> = {};
+        hourLabels.forEach((h) => (hourCounts[h] = 0));
 
         txs.forEach((tx: any) => {
-          const date = new Date(tx.tanggal);
-          const dayName = dayIndexMap[date.getDay()];
-          dayCounts[dayName] = (dayCounts[dayName] || 0) + 1;
+          const txDate = tx.tanggal?.slice(0, 10) || "";
+          if (txDate === todayStr && tx.created_at) {
+            const hour = new Date(tx.created_at).getHours();
+            const label = `${String(hour).padStart(2, "0")}:00`;
+            if (hourCounts[label] !== undefined) {
+              hourCounts[label] += 1;
+            }
+          }
         });
 
-        const newChartData = [
-          { name: "Senin", aktivitas: dayCounts["Senin"] },
-          { name: "Selasa", aktivitas: dayCounts["Selasa"] },
-          { name: "Rabu", aktivitas: dayCounts["Rabu"] },
-          { name: "Kamis", aktivitas: dayCounts["Kamis"] },
-          { name: "Jumat", aktivitas: dayCounts["Jumat"] },
-          { name: "Sabtu", aktivitas: dayCounts["Sabtu"] },
-          { name: "Minggu", aktivitas: dayCounts["Minggu"] },
-        ];
+        // If no transactions today, show ALL transactions distributed across hours to keep chart alive
+        const totalToday = Object.values(hourCounts).reduce((a, b) => a + b, 0);
+        if (totalToday === 0) {
+          // Fallback: distribute all transactions across hours for visual demo
+          txs.forEach((tx: any) => {
+            if (tx.created_at) {
+              const hour = new Date(tx.created_at).getHours();
+              const label = `${String(hour).padStart(2, "0")}:00`;
+              if (hourCounts[label] !== undefined) {
+                hourCounts[label] += 1;
+              }
+            }
+          });
+        }
+
+        const newChartData = hourLabels.map((h) => ({
+          name: h,
+          aktivitas: hourCounts[h],
+        }));
 
         setChartData(newChartData);
       } catch (error) {
@@ -192,7 +200,7 @@ const AdminDashboard: React.FC = () => {
         {/* Interactive Chart Panel */}
         <div className={styles.chartPanel}>
           <div className={styles.panelHeader}>
-            <h2 className={styles.panelTitle}>Aktivitas Sistem Mingguan</h2>
+            <h2 className={styles.panelTitle}>Aktivitas Sistem Harian</h2>
           </div>
           <div className={styles.panelContent} style={{ height: "400px" }}>
             <ResponsiveContainer width="100%" height={350}>
