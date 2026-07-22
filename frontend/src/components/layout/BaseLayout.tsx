@@ -38,39 +38,78 @@ const BaseLayout: React.FC<BaseLayoutProps> = ({ title }) => {
       });
     } else if (role === "front_office") {
       menu.push({
-        path: "transactions",
+        path: "dashboard",
+        icon: FileText,
+        label: "Dashboard",
+      });
+      menu.push({
+        path: "transaksi-baru",
         icon: ShoppingCart,
         label: "Transaksi Baru",
       });
-      menu.push({ path: "stocks", icon: Package, label: "Informasi Stok" });
-      menu.push({ path: "orders", icon: FileText, label: "Order ke Koperasi" });
+      menu.push({
+        path: "daftar-transaksi",
+        icon: FileText,
+        label: "Daftar Transaksi",
+      });
+      menu.push({
+        path: "informasi-stok",
+        icon: Package,
+        label: "Informasi Stok",
+      });
+      // Keeping these for functionality even if they are 'hidden' in the exact mockup view, we'll prefix them so user knows they exist.
+      menu.push({
+        path: "orders",
+        icon: FileText,
+        label: "[Logistik] Order ke Koperasi",
+      });
       menu.push({
         path: "receipts",
         icon: Package,
-        label: "Penerimaan Barang",
+        label: "[Logistik] Penerimaan",
       });
     } else if (role === "koperasi") {
-      menu.push({ path: "orders", icon: FileText, label: "Pesanan Masuk" });
       menu.push({
-        path: "receipts",
+        path: "dashboard",
+        icon: FileText,
+        label: "Dashboard",
+      });
+      menu.push({ path: "orders", icon: FileText, label: "Order Suku Cadang" });
+      menu.push({
+        path: "penerimaan",
         icon: Package,
-        label: "Penerimaan Barang",
+        label: "Penerimaan Suku Cadang",
+      });
+      menu.push({
+        path: "riwayat-penerimaan",
+        icon: FileText,
+        label: "Riwayat Penerimaan",
       });
     } else if (role === "kepala_upj") {
       menu.push({
-        path: "reports/services",
-        icon: Wrench,
-        label: "Laporan Jasa",
+        path: "dashboard",
+        icon: FileText,
+        label: "Dashboard",
       });
       menu.push({
-        path: "reports/sales",
-        icon: ShoppingCart,
+        path: "laporan-jasa-servis",
+        icon: FileText,
+        label: "Laporan Jasa Servis",
+      });
+      menu.push({
+        path: "laporan-penjualan",
+        icon: FileText,
         label: "Laporan Penjualan",
       });
       menu.push({
-        path: "reports/stocks",
+        path: "laporan-persediaan",
         icon: Package,
-        label: "Laporan Stok",
+        label: "Laporan Persediaan",
+      });
+      menu.push({
+        path: "produktivitas-mekanik",
+        icon: FileText,
+        label: "Produktivitas Mekanik",
       });
     }
 

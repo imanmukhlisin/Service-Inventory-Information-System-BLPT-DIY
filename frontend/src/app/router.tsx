@@ -14,10 +14,16 @@ import SparePartList from "../features/spare-parts/SparePartList";
 import TransactionList from "../features/transactions/TransactionList";
 import OrderList from "../features/orders/OrderList";
 import ReceiptList from "../features/orders/ReceiptList";
-import ReportsDashboard from "../features/reports/ReportsDashboard";
 import FODashboard from "../features/dashboard/FODashboard";
+import FOHistory from "../features/dashboard/FOHistory";
+import FOStockInfo from "../features/dashboard/FOStockInfo";
+import NotaPrint from "../features/print/NotaPrint";
 import KoperasiDashboard from "../features/dashboard/KoperasiDashboard";
+import KoperasiOrders from "../features/koperasi/KoperasiOrders";
+import KoperasiPenerimaan from "../features/koperasi/KoperasiPenerimaan";
+import KoperasiRiwayat from "../features/koperasi/KoperasiRiwayat";
 import UpjDashboard from "../features/dashboard/UpjDashboard";
+import UpjLaporanHub from "../features/upj/UpjLaporanHub";
 
 // Simple Unauthorized template
 const Unauthorized = () => (
@@ -87,7 +93,10 @@ export const router = createBrowserRouter([
         element: <BaseLayout title="Front Office" />,
         children: [
           { path: "dashboard", element: <FODashboard /> },
-          { path: "transactions", element: <TransactionList /> },
+          { path: "transaksi-baru", element: <TransactionList /> },
+          { path: "daftar-transaksi", element: <FOHistory /> },
+          { path: "informasi-stok", element: <FOStockInfo /> },
+          { path: "dafatar-transaksi/nota/:id", element: <NotaPrint /> }, // Specifically handling mockup 19
           { path: "orders", element: <OrderList /> },
           { path: "receipts", element: <ReceiptList /> },
         ],
@@ -102,8 +111,9 @@ export const router = createBrowserRouter([
         element: <BaseLayout title="Logistik Koperasi" />,
         children: [
           { path: "dashboard", element: <KoperasiDashboard /> },
-          { path: "orders", element: <OrderList /> },
-          { path: "receipts", element: <ReceiptList /> },
+          { path: "orders", element: <KoperasiOrders /> },
+          { path: "penerimaan", element: <KoperasiPenerimaan /> },
+          { path: "riwayat-penerimaan", element: <KoperasiRiwayat /> },
         ],
       },
     ],
@@ -116,7 +126,10 @@ export const router = createBrowserRouter([
         element: <BaseLayout title="Dashboard Laporan UPJ" />,
         children: [
           { path: "dashboard", element: <UpjDashboard /> },
-          { path: "reports", element: <ReportsDashboard /> },
+          { path: "laporan-jasa-servis", element: <UpjLaporanHub /> },
+          { path: "laporan-penjualan", element: <UpjLaporanHub /> },
+          { path: "laporan-persediaan", element: <UpjLaporanHub /> },
+          { path: "produktivitas-mekanik", element: <UpjDashboard /> }, // Embedded in dashboard for now in terms of actual implementation.
         ],
       },
     ],
