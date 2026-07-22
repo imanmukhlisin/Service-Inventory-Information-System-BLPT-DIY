@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiClient } from "../../lib/api";
-import { Trash2, ShoppingCart, Wrench, Package } from "lucide-react";
+import { useAuth } from "../../app/AuthContext";
 import Swal from "sweetalert2";
 import styles from "./TransactionList.module.css";
 
@@ -16,39 +16,47 @@ interface SparePart {
   stok_sekarang: number;
 }
 
-interface CartItem {
-  type: "jasa" | "sukucadang";
-  id_mekanik?: number;
-  nama_mekanik?: string;
-  id_master_suku_cadang?: number;
-  nama_suku_cadang?: string;
-  nama_jasa?: string;
-  biaya_jasa?: number;
-  keterangan_jasa?: string;
-  jumlah?: number;
-  harga_satuan?: number;
-  total_harga: number;
+interface JasaItem {
+  id_mekanik: number;
+  nama_mekanik: string;
+  nama_jasa: string;
+  biaya_jasa: number;
+  qty: number;
+  subtotal: number;
+}
+
+interface PartItem {
+  id_master_suku_cadang: number;
+  nama_suku_cadang: string;
+  harga_satuan: number;
+  stok_tersedia: number;
+  qty: number;
+  subtotal: number;
 }
 
 const TransactionList: React.FC = () => {
+  const { user } = useAuth();
   const [mechanics, setMechanics] = useState<Mechanic[]>([]);
   const [spareParts, setSpareParts] = useState<SparePart[]>([]);
 
-  // Cart
-  const [cart, setCart] = useState<CartItem[]>([]);
+  // Cart States
+  const [jasaList, setJasaList] = useState<JasaItem[]>([]);
+  const [partList, setPartList] = useState<PartItem[]>([]);
 
-  // Jasa Form State
+  // Jasa Form
   const [jasaForm, setJasaForm] = useState({
-    id_mekanik: "",
     nama_jasa: "",
+    id_mekanik: "",
+    qty: "1",
     biaya_jasa: "",
-    keterangan_jasa: "",
   });
 
-  // Spare Part Form State
+  // Part Form
   const [partForm, setPartForm] = useState({
     id_master_suku_cadang: "",
-    jumlah: "1",
+    stok_tersedia: "",
+    qty: "1",
+    harga_jual: "",
   });
 
   useEffect(() => {
@@ -75,69 +83,94 @@ const TransactionList: React.FC = () => {
     }
   };
 
+  const handlePartSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const pId = e.target.value;
+    if (!pId) {
+      setPartForm({
+        id_master_suku_cadang: "",
+        stok_tersedia: "",
+        qty: "1",
+        harga_jual: "",
+      });
+      return;
+    }
+    const part = spareParts.find((x) => x.id === parseInt(pId));
+    if (part) {
+      setPartForm({
+        ...partForm,
+        id_master_suku_cadang: pId,
+        stok_tersedia: part.stok_sekarang.toString(),
+        harga_jual: part.harga_jual.toString(),
+      });
+    }
+  };
+
   const addJasa = () => {
-    if (!jasaForm.id_mekanik || !jasaForm.nama_jasa || !jasaForm.biaya_jasa) {
+    if (
+      !jasaForm.nama_jasa ||
+      !jasaForm.id_mekanik ||
+      !jasaForm.qty ||
+      !jasaForm.biaya_jasa
+    ) {
       Swal.fire({ icon: "warning", text: "Lengkapi data jasa servis!" });
       return;
     }
     const mech = mechanics.find((m) => m.id === parseInt(jasaForm.id_mekanik));
-    const newItem: CartItem = {
-      type: "jasa",
+    const price = parseFloat(jasaForm.biaya_jasa);
+    const q = parseInt(jasaForm.qty);
+
+    const newItem: JasaItem = {
       id_mekanik: parseInt(jasaForm.id_mekanik),
-      nama_mekanik: mech?.nama_mekanik,
+      nama_mekanik: mech?.nama_mekanik || "",
       nama_jasa: jasaForm.nama_jasa,
-      biaya_jasa: parseFloat(jasaForm.biaya_jasa),
-      keterangan_jasa: jasaForm.keterangan_jasa,
-      total_harga: parseFloat(jasaForm.biaya_jasa),
+      biaya_jasa: price,
+      qty: q,
+      subtotal: price * q,
     };
-    setCart([...cart, newItem]);
-    setJasaForm({
-      id_mekanik: "",
-      nama_jasa: "",
-      biaya_jasa: "",
-      keterangan_jasa: "",
-    });
+    setJasaList([...jasaList, newItem]);
+    setJasaForm({ id_mekanik: "", nama_jasa: "", qty: "1", biaya_jasa: "" });
   };
 
   const addPart = () => {
-    if (!partForm.id_master_suku_cadang || !partForm.jumlah) {
+    if (!partForm.id_master_suku_cadang || !partForm.qty) {
       Swal.fire({ icon: "warning", text: "Lengkapi data suku cadang!" });
       return;
     }
-    const qty = parseInt(partForm.jumlah);
+    const qty = parseInt(partForm.qty);
     const part = spareParts.find(
       (p) => p.id === parseInt(partForm.id_master_suku_cadang),
     );
-
     if (!part) return;
+
     if (qty > part.stok_sekarang) {
       Swal.fire({
         icon: "error",
         title: "Stok Tidak Cukup!",
-        text: `Stok ${part.nama_suku_cadang} tersisa ${part.stok_sekarang}`,
+        text: `Sisa stok: ${part.stok_sekarang}`,
       });
       return;
     }
 
-    const newItem: CartItem = {
-      type: "sukucadang",
+    const newItem: PartItem = {
       id_master_suku_cadang: part.id,
       nama_suku_cadang: part.nama_suku_cadang,
-      jumlah: qty,
+      qty: qty,
       harga_satuan: part.harga_jual,
-      total_harga: part.harga_jual * qty,
+      stok_tersedia: part.stok_sekarang,
+      subtotal: part.harga_jual * qty,
     };
-    setCart([...cart, newItem]);
-    setPartForm({ id_master_suku_cadang: "", jumlah: "1" });
+    setPartList([...partList, newItem]);
+    setPartForm({
+      id_master_suku_cadang: "",
+      stok_tersedia: "",
+      qty: "1",
+      harga_jual: "",
+    });
   };
 
-  const removeCartItem = (index: number) => {
-    const newCart = [...cart];
-    newCart.splice(index, 1);
-    setCart(newCart);
-  };
-
-  const grandTotal = cart.reduce((acc, curr) => acc + curr.total_harga, 0);
+  const subtotalJasa = jasaList.reduce((acc, curr) => acc + curr.subtotal, 0);
+  const subtotalPart = partList.reduce((acc, curr) => acc + curr.subtotal, 0);
+  const grandTotal = subtotalJasa + subtotalPart;
 
   const formatIDR = (val: number) =>
     new Intl.NumberFormat("id-ID", {
@@ -146,27 +179,32 @@ const TransactionList: React.FC = () => {
       maximumFractionDigits: 0,
     }).format(val);
 
+  const getLocalDate = () => {
+    const today = new Date();
+    return today.toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
   const handleCheckout = async () => {
-    if (cart.length === 0) {
-      Swal.fire({ icon: "warning", text: "Keranjang masih kosong!" });
+    if (jasaList.length === 0 && partList.length === 0) {
+      Swal.fire({ icon: "warning", text: "Nota masih kosong!" });
       return;
     }
 
     const payload = {
-      services: cart
-        .filter((c) => c.type === "jasa")
-        .map((c) => ({
-          id_mekanik: c.id_mekanik,
-          nama_jasa: c.nama_jasa,
-          biaya_jasa: c.biaya_jasa,
-          keterangan_jasa: c.keterangan_jasa,
-        })),
-      spare_parts: cart
-        .filter((c) => c.type === "sukucadang")
-        .map((c) => ({
-          id_master_suku_cadang: c.id_master_suku_cadang,
-          jumlah: c.jumlah,
-        })),
+      services: jasaList.map((c) => ({
+        id_mekanik: c.id_mekanik,
+        nama_jasa: c.nama_jasa,
+        biaya_jasa: c.biaya_jasa,
+        keterangan_jasa: "", // No description in mockup
+      })),
+      spare_parts: partList.map((c) => ({
+        id_master_suku_cadang: c.id_master_suku_cadang,
+        jumlah: c.qty,
+      })),
     };
 
     try {
@@ -174,15 +212,16 @@ const TransactionList: React.FC = () => {
       Swal.fire({
         icon: "success",
         title: "Transaksi Berhasil",
-        text: "Stok telah terpotong (jika ada).",
+        text: "Data nota tersimpan.",
       });
-      setCart([]);
-      fetchDependancies(); // refresh stock
+      setJasaList([]);
+      setPartList([]);
+      fetchDependancies();
     } catch (err: any) {
       console.error(err);
       Swal.fire({
         icon: "error",
-        title: "Gagal memproses transaksi",
+        title: "Gagal",
         text: err.response?.data?.message || err.message,
       });
     }
@@ -191,226 +230,245 @@ const TransactionList: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Transaksi Kasir</h1>
+        <h1 className={styles.pageTitle}>Transaksi Baru</h1>
         <p className={styles.pageSubtitle}>
-          Catat transaksi jasa servis dan penjualan suku cadang (Front Office)
+          Catat jasa servis dan suku cadang dalam satu nota
         </p>
       </div>
 
-      <div className={styles.posGrid}>
-        <div className={styles.entryPanel}>
-          {/* JASA CARD */}
-          <div className={styles.card}>
-            <div className={styles.cardTitle}>
-              <Wrench
-                size={20}
-                style={{
-                  display: "inline",
-                  marginRight: 8,
-                  verticalAlign: "middle",
-                  color: "#3b82f6",
-                }}
-              />
-              Pelayanan Jasa Servis
-            </div>
-            <div className={styles.formGrid}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Mekanik</label>
-                <select
-                  className={styles.formInput}
-                  value={jasaForm.id_mekanik}
-                  onChange={(e) =>
-                    setJasaForm({ ...jasaForm, id_mekanik: e.target.value })
-                  }
-                >
-                  <option value="">Pilih Mekanik</option>
-                  {mechanics.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.nama_mekanik}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Nama Jasa</label>
-                <input
-                  type="text"
-                  className={styles.formInput}
-                  placeholder="Servis Ringan..."
-                  value={jasaForm.nama_jasa}
-                  onChange={(e) =>
-                    setJasaForm({ ...jasaForm, nama_jasa: e.target.value })
-                  }
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Biaya Jasa (Rp)</label>
-                <input
-                  type="number"
-                  className={styles.formInput}
-                  placeholder="0"
-                  value={jasaForm.biaya_jasa}
-                  onChange={(e) =>
-                    setJasaForm({ ...jasaForm, biaya_jasa: e.target.value })
-                  }
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>
-                  Keterangan (Opsional)
-                </label>
-                <input
-                  type="text"
-                  className={styles.formInput}
-                  placeholder="Catatan tambahan"
-                  value={jasaForm.keterangan_jasa}
-                  onChange={(e) =>
-                    setJasaForm({
-                      ...jasaForm,
-                      keterangan_jasa: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            </div>
-            <button className={styles.btnAdd} onClick={addJasa}>
-              + Tambah Jasa Ke Keranjang
-            </button>
+      <div className={styles.cardContainer}>
+        {/* INFORMASI TRANSAKSI */}
+        <div className={styles.card}>
+          <div className={styles.cardHeaderFlex}>
+            <h2 className={styles.cardTitle}>Informasi Transaksi</h2>
+            <span className={styles.badgeDraft}>Draft</span>
           </div>
-
-          {/* SPARE PART CARD */}
-          <div className={styles.card}>
-            <div className={styles.cardTitle}>
-              <Package
-                size={20}
-                style={{
-                  display: "inline",
-                  marginRight: 8,
-                  verticalAlign: "middle",
-                  color: "#10b981",
-                }}
+          <div className={styles.formGridInfo}>
+            <div className={styles.formGroup}>
+              <label>Nomor Nota</label>
+              <input type="text" disabled value="NT-(otomatis)" />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Tanggal</label>
+              <input type="text" disabled value={getLocalDate()} />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Petugas</label>
+              <input
+                type="text"
+                disabled
+                value={user?.nama_user || "Front Office"}
               />
-              Penjualan Suku Cadang
             </div>
-            <div className={styles.formGrid}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Suku Cadang</label>
-                <select
-                  className={styles.formInput}
-                  value={partForm.id_master_suku_cadang}
-                  onChange={(e) =>
-                    setPartForm({
-                      ...partForm,
-                      id_master_suku_cadang: e.target.value,
-                    })
-                  }
-                >
-                  <option value="">Pilih Barang...</option>
-                  {spareParts.map((p) => (
-                    <option
-                      key={p.id}
-                      value={p.id}
-                      disabled={p.stok_sekarang <= 0}
-                    >
-                      {p.nama_suku_cadang} - {formatIDR(p.harga_jual)} (Stok:{" "}
-                      {p.stok_sekarang})
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Jumlah (Qty)</label>
-                <input
-                  type="number"
-                  min="1"
-                  className={styles.formInput}
-                  value={partForm.jumlah}
-                  onChange={(e) =>
-                    setPartForm({ ...partForm, jumlah: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-            <button
-              className={styles.btnAdd}
-              style={{
-                background: "linear-gradient(135deg, #0f2c4a 0%, #059669 100%)",
-              }}
-              onClick={addPart}
-            >
-              + Tambah Suku Cadang Ke Keranjang
-            </button>
           </div>
         </div>
 
-        {/* CART (NOTA) PANEL */}
-        <div className={styles.cartPanel}>
-          <div className={styles.cardTitle}>
-            <ShoppingCart
-              size={20}
-              style={{
-                display: "inline",
-                marginRight: 8,
-                verticalAlign: "middle",
-              }}
-            />
-            Keranjang Nota
-          </div>
-
-          <div className={styles.cartList}>
-            {cart.length === 0 ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  padding: "40px 0",
-                  color: "#94a3b8",
-                }}
-              >
-                Keranjang kosong
-              </div>
-            ) : (
-              cart.map((item, idx) => (
-                <div key={idx} className={styles.cartItem}>
-                  <div className={styles.cartItemInfo}>
-                    <span className={styles.itemName}>
-                      {item.type === "jasa"
-                        ? `[Jasa] ${item.nama_jasa}`
-                        : `[Part] ${item.nama_suku_cadang}`}
-                    </span>
-                    <span className={styles.itemSub}>
-                      {item.type === "jasa"
-                        ? `Mekanik: ${item.nama_mekanik}`
-                        : `${item.jumlah} x ${formatIDR(item.harga_satuan || 0)}`}
-                    </span>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <span className={styles.itemPrice}>
-                      {formatIDR(item.total_harga)}
-                    </span>
-                    <button
-                      className={styles.removeBtn}
-                      onClick={() => removeCartItem(idx)}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          <div className={styles.cartTotals}>
-            <div className={styles.grandTotalRow}>
-              <span>Grand Total</span>
-              <span>{formatIDR(grandTotal)}</span>
+        {/* DETAIL JASA SERVIS */}
+        <div className={styles.card}>
+          <h2 className={styles.cardTitle}>Detail Jasa Servis</h2>
+          <div className={styles.formGridDynamic}>
+            <div className={styles.formGroup}>
+              <label>Jenis Jasa *</label>
+              <input
+                type="text"
+                placeholder="Pilih layanan jasa"
+                value={jasaForm.nama_jasa}
+                onChange={(e) =>
+                  setJasaForm({ ...jasaForm, nama_jasa: e.target.value })
+                }
+              />
             </div>
-            <button
-              className={styles.checkoutBtn}
-              disabled={cart.length === 0}
-              onClick={handleCheckout}
-            >
-              Proses Transaksi
+            <div className={styles.formGroup}>
+              <label>Mekanik *</label>
+              <select
+                value={jasaForm.id_mekanik}
+                onChange={(e) =>
+                  setJasaForm({ ...jasaForm, id_mekanik: e.target.value })
+                }
+              >
+                <option value="">Pilih mekanik</option>
+                {mechanics.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.nama_mekanik}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label>Jumlah *</label>
+              <input
+                type="number"
+                min="1"
+                value={jasaForm.qty}
+                onChange={(e) =>
+                  setJasaForm({ ...jasaForm, qty: e.target.value })
+                }
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Harga Jasa *</label>
+              <input
+                type="number"
+                placeholder="Rp0"
+                value={jasaForm.biaya_jasa}
+                onChange={(e) =>
+                  setJasaForm({ ...jasaForm, biaya_jasa: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          <div className={styles.btnActionRight}>
+            <button className={styles.btnAddOutline} onClick={addJasa}>
+              + Tambah Jasa
             </button>
+          </div>
+
+          {jasaList.length > 0 && (
+            <table className={styles.dataTable}>
+              <thead>
+                <tr>
+                  <th>Jasa</th>
+                  <th>Mekanik</th>
+                  <th>Qty</th>
+                  <th>Harga</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {jasaList.map((item, idx) => (
+                  <tr key={idx}>
+                    <td>{item.nama_jasa}</td>
+                    <td>{item.nama_mekanik}</td>
+                    <td>{item.qty}</td>
+                    <td>{formatIDR(item.biaya_jasa)}</td>
+                    <td>{formatIDR(item.subtotal)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* DETAIL SUKU CADANG */}
+        <div className={styles.card}>
+          <h2 className={styles.cardTitle}>Detail Suku Cadang</h2>
+          <div className={styles.formGridDynamic}>
+            <div className={styles.formGroup}>
+              <label>Suku Cadang *</label>
+              <select
+                value={partForm.id_master_suku_cadang}
+                onChange={handlePartSelect}
+              >
+                <option value="">Cari kode atau nama barang</option>
+                {spareParts.map((p) => (
+                  <option
+                    key={p.id}
+                    value={p.id}
+                    disabled={p.stok_sekarang <= 0}
+                  >
+                    {p.nama_suku_cadang}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label>Stok Tersedia</label>
+              <input
+                type="text"
+                disabled
+                value={
+                  partForm.stok_tersedia ? partForm.stok_tersedia + " pcs" : ""
+                }
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Jumlah *</label>
+              <input
+                type="number"
+                min="1"
+                value={partForm.qty}
+                onChange={(e) =>
+                  setPartForm({ ...partForm, qty: e.target.value })
+                }
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label>Harga Jual</label>
+              <input
+                type="text"
+                disabled
+                value={
+                  partForm.harga_jual
+                    ? formatIDR(parseFloat(partForm.harga_jual))
+                    : "Rp0"
+                }
+              />
+            </div>
+          </div>
+
+          <div className={styles.btnActionRight}>
+            <button className={styles.btnAddOutline} onClick={addPart}>
+              + Tambah Barang
+            </button>
+          </div>
+
+          {partList.length > 0 && (
+            <table className={styles.dataTable}>
+              <thead>
+                <tr>
+                  <th>Suku Cadang</th>
+                  <th>Stok</th>
+                  <th>Qty</th>
+                  <th>Harga</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {partList.map((item, idx) => (
+                  <tr key={idx}>
+                    <td>{item.nama_suku_cadang}</td>
+                    <td>{item.stok_tersedia}</td>
+                    <td>{item.qty}</td>
+                    <td>{formatIDR(item.harga_satuan)}</td>
+                    <td>{formatIDR(item.subtotal)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* RINGKASAN TRANSAKSI */}
+        <div className={styles.cardSummary}>
+          <div className={styles.summaryLeft}>
+            <button className={styles.btnDraft}>Simpan Draft</button>
+            <button className={styles.btnCetak} onClick={handleCheckout}>
+              Simpan & Cetak Nota
+            </button>
+            <button
+              className={styles.btnBatal}
+              onClick={() => {
+                setJasaList([]);
+                setPartList([]);
+              }}
+            >
+              Batal
+            </button>
+          </div>
+          <div className={styles.summaryRight}>
+            <div className={styles.summaryRow}>
+              <span>Subtotal Jasa</span>
+              <span>{formatIDR(subtotalJasa)}</span>
+            </div>
+            <div className={styles.summaryRow}>
+              <span>Subtotal Suku Cadang</span>
+              <span>{formatIDR(subtotalPart)}</span>
+            </div>
+            <div className={styles.summaryTotal}>
+              <span>Total Transaksi</span>
+              <span className={styles.totalValue}>{formatIDR(grandTotal)}</span>
+            </div>
           </div>
         </div>
       </div>

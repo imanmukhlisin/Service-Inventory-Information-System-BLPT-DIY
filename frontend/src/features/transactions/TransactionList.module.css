@@ -1,58 +1,76 @@
 /* TransactionList.module.css */
 .container {
-  padding: 24px;
-}
-
-.pageHeader {
-  margin-bottom: 24px;
-}
-
-.pageTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0;
-}
-
-.pageSubtitle {
-  font-size: 0.95rem;
-  color: #64748b;
-  margin-top: 4px;
-}
-
-.posGrid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-}
-
-/* Left Panel - Entry Forms */
-.entryPanel {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
+.pageHeader {
+  margin-bottom: 8px;
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f2c4a;
+  margin: 0;
+}
+
+.pageSubtitle {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 4px 0 0 0;
+}
+
+.cardContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .card {
   background: white;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
   padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.cardHeaderFlex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .cardTitle {
   font-size: 1.1rem;
-  font-weight: 600;
-  color: #0f2c4a;
-  margin-bottom: 16px;
-  border-bottom: 2px solid #f1f5f9;
-  padding-bottom: 12px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 20px 0;
+}
+.cardHeaderFlex .cardTitle {
+  margin: 0;
 }
 
-.formGrid {
+.badgeDraft {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.formGridInfo {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.formGridDynamic {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr 2fr;
   gap: 16px;
 }
 
@@ -62,156 +80,158 @@
   gap: 8px;
 }
 
-.formGroupFull {
-  grid-column: span 2;
-}
-
-.formLabel {
-  font-size: 0.85rem;
+.formGroup label {
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #475569;
+  color: #0f2c4a;
 }
 
-.formInput {
+.formGroup input,
+.formGroup select {
   padding: 10px 14px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  color: #334155;
   transition: all 0.2s;
 }
 
-.formInput:focus {
+.formGroup input:focus,
+.formGroup select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #0284c7;
 }
 
-.btnAdd {
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #0f2c4a 0%, #1e40af 100%);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
+.formGroup input:disabled {
+  background-color: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.btnActionRight {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  margin-bottom: 12px;
+}
+
+.btnAddOutline {
+  background: white;
+  color: #0284c7;
+  border: 1px solid #0284c7;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition:
-    transform 0.1s,
-    box-shadow 0.2s;
-  display: inline-block;
-  margin-top: 16px;
+  transition: all 0.2s;
+}
+.btnAddOutline:hover {
+  background: #f0f9ff;
 }
 
-.btnAdd:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(15, 44, 74, 0.2);
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
 }
 
-/* Right Panel - Cart Summary */
-.cartPanel {
+.dataTable th {
+  background-color: #f8fafc;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  padding: 10px 12px;
+  text-align: left;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dataTable td {
+  padding: 12px;
+  font-size: 0.85rem;
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Summary Card */
+.cardSummary {
   background: white;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
   padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   display: flex;
-  flex-direction: column;
-  height: max-content;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
-.cartList {
+.summaryLeft {
+  display: flex;
+  gap: 12px;
+}
+
+.btnDraft {
+  background: white;
+  color: #0284c7;
+  border: 1px solid #cbd5e1;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnCetak {
+  background: #0ea5e9;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnBatal {
+  background: #f8fafc;
+  color: #64748b;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.summaryRight {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 24px;
-  max-height: 400px;
-  overflow-y: auto;
+  min-width: 300px;
 }
 
-.cartItem {
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.summaryTotal {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
-  border-radius: 8px;
-}
-
-.cartItemInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.itemName {
-  font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-weight: 700;
   color: #1e293b;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
 }
 
-.itemSub {
-  font-size: 0.8rem;
-  color: #64748b;
-}
-
-.itemPrice {
-  font-weight: 700;
-  color: #0f2c4a;
-  text-align: right;
-}
-
-.removeBtn {
-  background: none;
-  border: none;
-  color: #ef4444;
-  cursor: pointer;
-  margin-left: 8px;
-}
-
-.cartTotals {
-  border-top: 2px dashed #e2e8f0;
-  padding-top: 16px;
-  margin-top: auto;
-}
-
-.totalRow {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 0.95rem;
-  color: #64748b;
-}
-
-.grandTotalRow {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #0f2c4a;
-}
-
-.checkoutBtn {
-  width: 100%;
-  padding: 16px;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.checkoutBtn:hover {
-  background: #059669;
-}
-
-.checkoutBtn:disabled {
-  background: #94a3b8;
-  cursor: not-allowed;
+.totalValue {
+  font-size: 1.5rem;
+  color: #0284c7;
 }
 
 /* Response Overrides */
