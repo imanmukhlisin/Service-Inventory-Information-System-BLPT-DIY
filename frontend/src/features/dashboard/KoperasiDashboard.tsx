@@ -95,10 +95,12 @@ const KoperasiDashboard: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Dashboard Koperasi</h1>
-        <p className={styles.pageSubtitle}>
+        <h2
+          className={styles.pageSubtitle}
+          style={{ fontSize: "1.1rem", marginTop: 0 }}
+        >
           Pemantauan order dan penerimaan suku cadang
-        </p>
+        </h2>
       </div>
 
       <div className={styles.metricsGrid}>

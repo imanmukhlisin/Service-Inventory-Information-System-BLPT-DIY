@@ -8,10 +8,12 @@ const UpjLaporanHub: React.FC = () => {
   return (
     <div>
       <div className={styles.pageHeader} style={{ marginBottom: "0.5rem" }}>
-        <h1 className={styles.pageTitle}>Modul Ekspor Laporan UPJ</h1>
-        <p className={styles.pageSubtitle}>
+        <h2
+          className={styles.pageSubtitle}
+          style={{ fontSize: "1.1rem", marginTop: 0 }}
+        >
           Menyambungkan format PDF Mockup 15, 16, dan 17
-        </p>
+        </h2>
       </div>
       <ReportsDashboard />
     </div>

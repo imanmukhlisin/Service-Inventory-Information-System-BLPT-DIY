@@ -82,10 +82,12 @@ const FODashboard: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Dashboard Front Office</h1>
-        <p className={styles.pageSubtitle}>
+        <h2
+          className={styles.pageSubtitle}
+          style={{ fontSize: "1.1rem", marginTop: 0 }}
+        >
           Aktivitas transaksi operasional hari ini
-        </p>
+        </h2>
       </div>
 
       <div className={styles.metricsGrid}>

@@ -76,10 +76,12 @@ const UpjDashboard: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.pageTitle}>Dashboard Kepala UPJ</h1>
-          <p className={styles.pageSubtitle}>
+          <h2
+            className={styles.pageSubtitle}
+            style={{ fontSize: "1.1rem", marginTop: 0 }}
+          >
             Ringkasan kinerja operasional UPJ Otomotif & AHASS
-          </p>
+          </h2>
         </div>
         <Link to="/kepala-upj/reports" className={styles.btnOutline}>
           Buka Modul Ekspor Laporan
