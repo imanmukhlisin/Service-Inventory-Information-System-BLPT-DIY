@@ -38,6 +38,35 @@
   animation-delay: 0.2s;
 }
 
+.welcomeWrapper {
+  min-height: 40px;
+  margin-bottom: 24px;
+}
+
+.typewriterText {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin: 0;
+  font-family: "Inter", monospace;
+}
+
+.cursor {
+  font-weight: 100;
+  color: #38bdf8;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
 .mainTitle {
   font-size: 2.75rem;
   font-weight: 700;

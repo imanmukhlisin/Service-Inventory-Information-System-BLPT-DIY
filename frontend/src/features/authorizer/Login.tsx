@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { apiClient } from "../../lib/api";
@@ -13,8 +13,37 @@ const Login: React.FC = () => {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Typewriter effect state
+  const [typingText, setTypingText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const welcomeMessage = "Welcome to BLPT DIY...";
+
   const navigate = useNavigate();
   const { checkAuth } = useAuth();
+
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (isDeleting) {
+      if (typingText.length > 0) {
+        timeout = setTimeout(() => {
+          setTypingText(welcomeMessage.substring(0, typingText.length - 1));
+        }, 50);
+      } else {
+        timeout = setTimeout(() => setIsDeleting(false), 500); // pause before retyping
+      }
+    } else {
+      if (typingText.length < welcomeMessage.length) {
+        timeout = setTimeout(() => {
+          setTypingText(welcomeMessage.substring(0, typingText.length + 1));
+        }, 120);
+      } else {
+        timeout = setTimeout(() => setIsDeleting(true), 3000); // pause before deleting
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [typingText, isDeleting, welcomeMessage]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +103,13 @@ const Login: React.FC = () => {
               "https://upload.wikimedia.org/wikipedia/commons/9/9d/Logo_Pendidikan_Nasional_%28Indonesia%29.svg";
           }}
         />
+
+        <div className={styles.welcomeWrapper}>
+          <h2 className={styles.typewriterText}>
+            {typingText}
+            <span className={styles.cursor}>|</span>
+          </h2>
+        </div>
 
         <p className={styles.systemLabel}>SISTEM INFORMASI</p>
         <h1 className={styles.mainTitle}>
