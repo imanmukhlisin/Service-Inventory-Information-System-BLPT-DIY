@@ -92,6 +92,10 @@
   animation-delay: 0.3s;
 }
 
+.cardHeader {
+  text-align: center;
+}
+
 .cardHeader h2 {
   font-size: 1.75rem;
   color: #0f2c4a;
@@ -102,7 +106,7 @@
 .cardHeader p {
   color: #64748b;
   font-size: 0.9rem;
-  margin: 0 0 35px 0;
+  margin: 0 auto 35px auto;
 }
 
 .formGroup {
@@ -286,4 +290,3 @@
     transform: translateY(0);
   }
 }
-
