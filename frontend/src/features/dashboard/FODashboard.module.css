@@ -1,8 +1,50 @@
-/* FODashboard.module.css */
-.container {
-  padding: 32px;
-  max-width: 1200px;
-  margin: 0 auto;
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.metricCard {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f8fafc;
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.metricCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+  border-color: #e2e8f0;
+}
+
+.metricHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metricCard:hover .iconWrapper {
+  transform: scale(1.15) rotate(-5deg);
 }
 
 .pageHeader {
@@ -70,13 +112,14 @@
 }
 
 .metricLabel {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #64748b;
+  margin: 0;
 }
 
 .metricValue {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: #0f172a;
   margin: 0;
@@ -84,16 +127,16 @@
 }
 
 .metricSubtext {
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   color: #94a3b8;
-  margin-top: 2px;
+  margin-top: 8px;
 }
 
 /* Split content area */
 .contentGrid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 12px;
+  gap: 32px;
 }
 
 @media (max-width: 900px) {
@@ -105,17 +148,22 @@
 .card {
   background: white;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  padding: 12px 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f8fafc;
+  padding: 32px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
 }
 
 .cardTitle {
-  font-size: 1.05rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #0f172a;
   margin-top: 0;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 
 .tableGroup {
@@ -125,15 +173,15 @@
 
 .tableGroup th {
   text-align: left;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: #64748b;
-  padding: 8px;
+  padding: 16px 12px;
   border-bottom: 1px solid #e2e8f0;
 }
 
 .tableGroup td {
-  padding: 8px;
-  font-size: 0.85rem;
+  padding: 20px 12px;
+  font-size: 0.95rem;
   color: #1e293b;
   border-bottom: 1px solid #f1f5f9;
 }
@@ -146,15 +194,21 @@
 .stockList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 20px;
 }
 
 .stockItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 8px;
+  padding-bottom: 16px;
   border-bottom: 1px solid #f1f5f9;
+  transition: background 0.2s;
+  padding: 12px;
+  border-radius: 8px;
+}
+.stockItem:hover {
+  background: #f8fafc;
 }
 
 .stockItem:last-child {
@@ -188,20 +242,23 @@
 .btnCta {
   display: block;
   width: 100%;
-  padding: 8px 12px;
+  padding: 16px;
   background: #3b82f6;
   color: white;
   text-align: center;
-  border-radius: 6px;
+  border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  margin-top: 12px;
-  transition: background 0.2s;
+  margin-top: 32px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .btnCta:hover {
   background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.4);
 }
