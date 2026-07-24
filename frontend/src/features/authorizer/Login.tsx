@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import Swal from "sweetalert2";
 import { apiClient } from "../../lib/api";
 import { useAuth } from "../../app/AuthContext";
 import styles from "./Login.module.css";
@@ -187,9 +188,13 @@ const Login: React.FC = () => {
                 type="button"
                 className={styles.forgotPassword}
                 onClick={() =>
-                  alert(
-                    "Silakan hubungi administrator untuk mereset kata sandi Anda.",
-                  )
+                  Swal.fire({
+                    icon: "info",
+                    title: "Lupa Password?",
+                    text: "Silahkan Hubungi Admin UPJ AHHAS BLPT DIY Untuk Mereset Password Anda",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#3085d6",
+                  })
                 }
               >
                 Lupa kata sandi?
